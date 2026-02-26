@@ -37,6 +37,23 @@
 - **Messenger integration**: Agnostic adapter pattern — KakaoTalk first, extensible to WhatsApp/LINE/etc.
 - **API-first**: RESTful backend serving all four applications
 
+### Tech Stack (Finalized)
+
+| Layer | Technology | ADR |
+|-------|-----------|-----|
+| Backend | Node.js + NestJS (TypeScript) | [ADR-011](docs/trd/adr/011-nestjs-backend.md) |
+| Frontend | React + Vite (TypeScript) | [ADR-012](docs/trd/adr/012-react-vite-frontend.md) |
+| Kiosk App | Swift (native iOS) | [ADR-004](docs/trd/adr/004-face-recognition-on-device.md) |
+| Database | PostgreSQL (RDS) | — |
+| Cache/Queue | Redis (ElastiCache) + SQS | — |
+| Cloud | AWS (ECS Fargate → EKS migration path) | [ADR-013](docs/trd/adr/013-aws-cloud-platform.md) |
+| CI/CD | GitHub Actions | [ADR-014](docs/trd/adr/014-github-actions-cicd.md) |
+| Containerization | Docker + Amazon ECR | [ADR-013](docs/trd/adr/013-aws-cloud-platform.md) |
+| Storage/CDN | S3 + CloudFront | — |
+| SMS | Twilio | — |
+| Email | SendGrid | — |
+| Push | Firebase Cloud Messaging | — |
+
 ---
 
 ## DOCUMENTATION SYSTEM
@@ -87,7 +104,7 @@ PRD → TRD → IMP → Implementation
 ```
 
 1. **PRD Phase**: Gather requirements from the user. Create `docs/PRD.md` with business goals, user stories, feature scope, and acceptance criteria. PRD defines **what** and **why**.
-2. **TRD Phase**: Translate PRD into technical specifications. Create `docs/trd/` directory with section files, index, and ADRs. TRD defines **how** — completely. After TRD, the PRD is never referenced during development.
+2. **TRD Phase**: Translate PRD into technical specifications. Create `docs/trd/` directory with section files, index, and ADRs. TRD defines **how** — completely. All technology choices (language, framework, database, cloud provider, key libraries) must be finalized with ADRs before moving to IMP. No "Option A vs Option B" — only decisions. After TRD, the PRD is never referenced during development.
 3. **IMP Phase**: Create `docs/imp/` directory with phased implementation plan. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file. Index at `docs/imp/README.md`, one file per phase.
 4. **Pre-Implementation Checkpoint**: Once PRD, TRD, and IMP are all finalized, ask the user: _"Project structure is defined. Should I tailor AGENTS.md to remove rules that don't apply to this project?"_ If confirmed, remove irrelevant sections and add a note: `<!-- Tailored on YYYY-MM-DD -->`.
 5. **Implementation Phase**: Pick up tasks from `imp/README.md`, follow the Workflow below for each code change.
@@ -167,6 +184,7 @@ The TRD is the **single source of truth** for implementation. During development
 - **ALWAYS** include: data model, validation rules, state transitions, error handling, edge cases, and configuration options for each feature
 - If the TRD is missing information needed to implement a feature, **update the TRD first** before writing code
 - The PRD defines **what and why**. The TRD defines **how** — completely.
+- **EVERY** technology choice must be finalized in the TRD with a corresponding ADR — no open options ("X or Y") are allowed. The IMP cannot be created until all technical decisions are locked.
 
 ### TRD as Living Document (CRITICAL)
 

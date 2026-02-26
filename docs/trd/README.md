@@ -63,6 +63,10 @@ Architectural decisions are documented in [`adr/`](./adr/). See the [ADR Index](
 | [008](./adr/008-api-first-restful-backend.md) | API-First RESTful Backend | 01, 05 |
 | [009](./adr/009-stripe-only-payments.md) | Stripe-Only Payments | 10 |
 | [010](./adr/010-trd-living-document.md) | TRD as Living Document | All |
+| [011](./adr/011-nestjs-backend.md) | NestJS Backend Framework | 01, 05, 21 |
+| [012](./adr/012-react-vite-frontend.md) | React + Vite Frontend | 01, 17 |
+| [013](./adr/013-aws-cloud-platform.md) | AWS Cloud Platform | 01, 18, 21 |
+| [014](./adr/014-github-actions-cicd.md) | GitHub Actions CI/CD | 21 |
 
 ---
 

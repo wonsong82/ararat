@@ -30,7 +30,7 @@
 
 ### 0.4 API Framework
 
-- [ ] **REST API skeleton** — `docs/trd/05-api-design.md` — Express/Fastify setup, RESTful routing conventions, tenant-scoped URL pattern (`/api/v1/tenants/{tenantId}/...`)
+- [ ] **REST API skeleton** — `docs/trd/05-api-design.md` — NestJS setup, RESTful routing conventions, tenant-scoped URL pattern (`/api/v1/tenants/{tenantId}/...`)
 - [ ] **Standard response envelope** — `docs/trd/05-api-design.md` — Success/error response format, cursor-based pagination, error codes and structured error responses
 - [ ] **Rate limiting & request validation** — `docs/trd/05-api-design.md` — Per-tenant rate limits (Redis-backed), input validation middleware, request sanitization
 

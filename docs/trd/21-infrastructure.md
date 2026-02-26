@@ -1,53 +1,42 @@
 # 21. Infrastructure & Deployment
 
 **Related TRDs**: All sections  
-**Related ADRs**: _None_  
+**Related ADRs**: [ADR-011](./adr/011-nestjs-backend.md), [ADR-013](./adr/013-aws-cloud-platform.md), [ADR-014](./adr/014-github-actions-cicd.md)  
 **Phase**: MVP (Phase 1)
 
 ---
 
-### Cloud Platform
+### Cloud Platform — AWS ([ADR-013](./adr/013-aws-cloud-platform.md))
 
-**Option A: AWS**
-- Compute: ECS (Elastic Container Service) or EKS (Elastic Kubernetes Service)
-- Database: RDS PostgreSQL (managed)
-- Cache: ElastiCache Redis
-- Queue: SQS (Simple Queue Service)
-- Storage: S3 + CloudFront
-- Monitoring: CloudWatch
-- Logging: CloudWatch Logs
-
-**Option B: GCP**
-- Compute: Cloud Run or GKE (Google Kubernetes Engine)
-- Database: Cloud SQL PostgreSQL (managed)
-- Cache: Cloud Memorystore Redis
-- Queue: Cloud Tasks
-- Storage: Cloud Storage + Cloud CDN
-- Monitoring: Cloud Monitoring
-- Logging: Cloud Logging
-
-**Recommendation**: AWS for broader ecosystem and marketplace integrations. GCP for simpler setup and lower operational overhead.
+- **Compute**: ECS Fargate (→ EKS migration path when platform scales to 500+ gyms)
+- **Database**: RDS PostgreSQL (managed)
+- **Cache**: ElastiCache Redis
+- **Queue**: SQS (Simple Queue Service)
+- **Storage**: S3 + CloudFront
+- **Monitoring**: CloudWatch
+- **Logging**: CloudWatch Logs
 
 ### Containerization
 
 - **Docker**: All services containerized.
-- **Kubernetes** (or ECS): Orchestration and auto-scaling.
-- **Image Registry**: Amazon ECR (AWS) or Google Container Registry (GCP).
+- **Amazon ECS Fargate**: Container orchestration and auto-scaling. Migration to EKS when operational complexity warrants (500+ gyms, multi-region).
+- **Amazon ECR**: Container image registry.
 
 ### CI/CD Pipeline
 
-1. **Source Control**: GitHub or GitLab.
-2. **Automated Testing**: Unit tests, integration tests, E2E tests on every commit.
-3. **Build**: Docker image built and pushed to registry.
-4. **Staging Deployment**: Auto-deploy to staging environment.
-5. **Staging Tests**: Smoke tests, performance tests.
-6. **Manual Approval**: Team reviews and approves for production.
-7. **Production Deployment**: Blue-green deployment (zero downtime).
-8. **Monitoring**: Automated rollback if error rate spikes.
+1. **Source Control**: GitHub.
+2. **CI/CD**: GitHub Actions ([ADR-014](./adr/014-github-actions-cicd.md)).
+3. **Automated Testing**: Unit tests, integration tests, E2E tests on every push.
+4. **Build**: Docker image built and pushed to Amazon ECR.
+5. **Staging Deployment**: Auto-deploy to staging environment.
+6. **Staging Tests**: Smoke tests, performance tests.
+7. **Manual Approval**: Team reviews and approves for production.
+8. **Production Deployment**: Blue-green deployment (zero downtime).
+9. **Monitoring**: Automated rollback if error rate spikes.
 
 ### Database
 
-**PostgreSQL** (managed RDS or Cloud SQL):
+**PostgreSQL** (managed via Amazon RDS):
 - Multi-AZ deployment for high availability.
 - Automated daily backups with 30-day retention.
 - Point-in-time recovery capability.
@@ -56,7 +45,7 @@
 
 ### Caching
 
-**Redis** (managed ElastiCache or Cloud Memorystore):
+**Redis** (managed via Amazon ElastiCache):
 - Session storage (JWT tokens, refresh tokens).
 - Rate limiting counters.
 - Async notification queue.
@@ -65,7 +54,7 @@
 
 ### Queue
 
-**SQS** (AWS) or **Cloud Tasks** (GCP):
+**Amazon SQS**:
 - Async notification dispatch (push, SMS, email, messenger).
 - Batch processing (daily cron jobs, report generation).
 - Retry logic with exponential backoff.
@@ -114,7 +103,7 @@
 - **Horizontal Scaling**: Auto-scaling groups for API servers (scale based on CPU/memory).
 - **Database Scaling**: Read replicas for read-heavy workloads. Sharding by tenant_id if needed (500+ gyms).
 - **Cache Scaling**: Redis cluster mode for distributed caching.
-- **CDN Scaling**: CloudFront/Cloud CDN handles global distribution automatically.
+- **CDN Scaling**: CloudFront handles global distribution automatically.
 
 ### Cost Optimization
 

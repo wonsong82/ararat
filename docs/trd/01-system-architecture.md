@@ -1,7 +1,7 @@
 # 1. System Architecture Overview
 
 **Related TRDs**: [02-multi-tenancy](./02-multi-tenancy.md), [03-data-model](./03-data-model.md), [04-auth](./04-auth.md), [05-api-design](./05-api-design.md)  
-**Related ADRs**: [ADR-003](./adr/003-multi-tenant-architecture.md), [ADR-008](./adr/008-api-first-restful-backend.md)  
+**Related ADRs**: [ADR-003](./adr/003-multi-tenant-architecture.md), [ADR-008](./adr/008-api-first-restful-backend.md), [ADR-011](./adr/011-nestjs-backend.md), [ADR-012](./adr/012-react-vite-frontend.md), [ADR-013](./adr/013-aws-cloud-platform.md), [ADR-014](./adr/014-github-actions-cicd.md)  
 **Phase**: MVP (Phase 1)
 
 ---
@@ -92,16 +92,16 @@ graph TB
 - **Reporting Service**: Generates reports, aggregates analytics data, and exports to PDF/Excel.
 - **File Service**: Handles photo uploads, storage in S3, CDN distribution, and access control.
 
-### Tech Stack Recommendations
+### Tech Stack
 
-- **Backend**: Node.js/Express or Python/FastAPI (API-first, stateless, horizontally scalable)
-- **Database**: PostgreSQL (ACID compliance, JSON support for flexible configurations, row-level security for multi-tenancy)
-- **Caching/Queue**: Redis (session storage, rate limiting, async notification dispatch)
-- **Frontend**: React or Vue.js (responsive web, mobile-friendly)
-- **Kiosk App**: Swift (native iOS) for iPad, leveraging Apple Vision Framework and on-device ML
-- **Cloud**: AWS or GCP (managed services, auto-scaling, global CDN)
-- **Containerization**: Docker + Kubernetes (or ECS for AWS)
-- **CI/CD**: GitHub Actions or GitLab CI
+- **Backend**: Node.js + NestJS (TypeScript) — API-first, modular, horizontally scalable ([ADR-011](./adr/011-nestjs-backend.md))
+- **Database**: PostgreSQL — ACID compliance, JSON support for flexible configurations, row-level security for multi-tenancy
+- **Caching/Queue**: Redis — session storage, rate limiting, async notification dispatch
+- **Frontend**: React + Vite (TypeScript) — responsive web, mobile-friendly ([ADR-012](./adr/012-react-vite-frontend.md))
+- **Kiosk App**: Swift (native iOS) for iPad, leveraging Apple Vision Framework and on-device ML ([ADR-004](./adr/004-face-recognition-on-device.md))
+- **Cloud**: AWS — ECS Fargate (with EKS migration path), managed services, auto-scaling, CloudFront CDN ([ADR-013](./adr/013-aws-cloud-platform.md))
+- **Containerization**: Docker + Amazon ECS Fargate (→ EKS when scale warrants)
+- **CI/CD**: GitHub Actions ([ADR-014](./adr/014-github-actions-cicd.md))
 
 
 ### Implementation Notes

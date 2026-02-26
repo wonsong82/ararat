@@ -16,6 +16,10 @@ This directory contains all architecture decisions made for the Ararat platform.
 | [008](./008-api-first-restful-backend.md) | API-First RESTful Backend | Accepted | 2025-02-25 | 01-system-architecture, 05-api-design |
 | [009](./009-stripe-only-payments.md) | Stripe-Only Payments | Accepted | 2025-02-25 | 10-payments |
 | [010](./010-trd-living-document.md) | TRD as Living Document | Accepted | 2025-02-25 | All TRD sections, AGENTS.md |
+| [011](./011-nestjs-backend.md) | NestJS Backend Framework | Accepted | 2026-02-25 | 01-system-architecture, 05-api-design, 21-infrastructure |
+| [012](./012-react-vite-frontend.md) | React + Vite Frontend | Accepted | 2026-02-25 | 01-system-architecture, 17-monitor-app |
+| [013](./013-aws-cloud-platform.md) | AWS Cloud Platform | Accepted | 2026-02-25 | 01-system-architecture, 18-file-storage, 21-infrastructure |
+| [014](./014-github-actions-cicd.md) | GitHub Actions CI/CD | Accepted | 2026-02-25 | 21-infrastructure |
 
 ## When to Create a New ADR
 
