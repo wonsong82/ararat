@@ -271,6 +271,38 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - Never commit `.env` files — use `.env.example` as template
 - Never hardcode credentials, API keys, or secrets
 
+### Testing Conventions
+
+- **EVERY** new feature or bug fix must include tests
+- **BEFORE** writing code, check if a testing framework is already set up — match existing patterns
+- **Test file location**: co-locate test files with source files (`foo.ts` → `foo.test.ts`) unless the project uses a separate `tests/` directory — follow whichever convention already exists
+- **Naming**: test files mirror source file names with `.test.` or `.spec.` suffix
+- **What to test**:
+  - Unit tests: pure functions, business logic, utilities, validators
+  - Integration tests: API endpoints, database queries, service interactions
+  - E2E tests: critical user flows (only when explicitly required)
+- **Test first when fixing bugs**: write a failing test that reproduces the bug, then fix it
+- **NEVER** delete or skip failing tests to make the suite pass — fix the code or the test
+- If no testing framework exists yet, **ask the user** which framework to use before setting one up
+
+### Code Organization
+
+- **BEFORE** creating new files, check existing project structure and follow the same patterns
+- **NEVER** invent new organizational patterns when existing ones are established — consistency beats cleverness
+- If the project has no clear structure yet, propose one and get user confirmation before creating files
+- Business logic belongs in dedicated service/lib files — not in route handlers, UI components, or controllers
+- Keep files focused: one module/class/concern per file. If a file exceeds ~300 lines, consider splitting
+- Shared types, constants, and utilities go in common/shared directories — not duplicated across features
+
+### Incremental Verification
+
+- **VERIFY after each logical change** — do not accumulate multiple changes before checking
+- After editing a file: run linter/type-check on that file immediately
+- After completing a feature unit: run relevant tests before moving to the next unit
+- After all changes: run full test suite + build before committing
+- **If a verification fails**: fix it immediately before proceeding — do not stack more changes on top of broken code
+- This prevents cascading errors that are exponentially harder to debug
+
 ---
 
 ## WHERE TO LOOK
