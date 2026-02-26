@@ -1,0 +1,28 @@
+i want to create the platform to support Korean Taekwondo gym owners to manage their members.
+Can you look into Note.txt and Requirements.txt and come up with the PRD.md (in english).
+This platform i want it to be universial, so it can be applied to different TaeKwonDo gym owners.
+
+key notes to consider:
+    attendence: when child comes to the gym, i want it to be auto scanned, so perhaps face recognition be good idea using Kiosk.
+    alignment: whatever the activities happen in the gym, we want to update this into the parent.
+
+  i want to add more context to it, look at Reference.txt. it contains competitor / references so we can copy more features if they have good way alraedy
+
+
+##################
+
+Let make modification.
+First, Target audience is US market. TaeKwonDo gym operated in US, mostly run by korean owners, and members are diverse but high portion of korean. so it should support multilanguage (Korean, English, Spanish) but payments locality is in US.
+
+
+###################
+
+1. Messenger integration should be agnostic, not only for Kakao. we can start out with kakao.
+
+2. Take out shuttle van related feature.
+
+
+ ######################
+
+ for 6.2.3, GPS-Triggered Notification, its not really required, lets take that out.
+ 

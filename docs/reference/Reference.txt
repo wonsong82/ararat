@@ -1,0 +1,223 @@
+회원 관리 시스템 목록 (11개):
+1.	Zen Planner
+2.	WellnessLiving
+3.	Gymdesk
+4.	Mindbody
+5.	Kicksite
+6.	Spark Membership
+7.	RhinoFit
+8.	PushPress
+9.	Glofox
+10.	Clubworx
+11.	Martialytics
+각 시스템 상세 정보:
+1. Zen Planner
+•	주요 기능 상세:
+o	Pull Reports: 맞춤형 보고서 대시보드로 재정, 학생, 출석 정보 확인. 태권도 도장에서 수익 분석, 등록 추세, 출석 패턴 모니터링으로 데이터 기반 의사 결정, 운영 최적화.
+o	Process Payments: 통합 결제 처리로 멤버십, 클래스, 소매 품목 결제. 태권도 도장에서 월 멤버십, 수수료, 장비 구매 처리, 행정 작업 최소화.
+o	Bill Students: 자동 청구로 수익 보장. 태권도 도장에서 반복 청구 설정, 수동 인보이싱 감소.
+o	Track Skills: 기술 발전 추적으로 동기 부여. 태권도 도장에서 형태, 스파링 기술 모니터링, 벨트 테스트 준비 식별.
+o	Set Up Programming: 다양한 피트니스 요구 프로그램 생성. 태권도 도장에서 초보자, 고급, 가족 훈련 설계.
+o	Schedule Classes: 클래스 매개변수 설정, 임베드 캘린더. 태권도 도장에서 클래스 시간·용량·수준 정의, 학생 웹 예약.
+o	Simplify Check-In: 멤버 앱으로 체크인 간소화. 태권도 도장에서 앱 체크인으로 병목 감소.
+o	Sell Retail: 온라인 스토어로 유니폼, 벨트 판매. 태권도 도장에서 추가 수익 창출.
+o	Belt Tracking: 벨트 랭크 표시로 테스트 대상자 식별. 태권도 도장에서 랭크·테스트 준비 추적.
+o	Family Management: 공유 가족 계정 관리. 태권도 도장에서 단일 로그인으로 청구·일정 간소화.
+o	Shared Curriculum: 비디오로 기술 공유. 태권도 도장에서 형태·킥 비디오 업로드, 학생 복습 지원.
+•	장점: 직관적 인터페이스, 무술 특화 기능(벨트 추적), 우수한 고객 지원, 지속적 업데이트.
+•	단점: 높은 비용, 일부 기능 제한, 계정 종료 수수료, 업데이트 부족 가능성.
+•	가격 정책:
+티어	월 비용	활성 학생 수	주요 포함 기능	추가 비용
+Studio (기본)	$99	1-75	예약, 지불, 보고, 벨트 추적	웹사이트 $99/월, 리드 캡처 $249/월
+Studio	$189	76-100	모든 기본 기능	지불 처리 수수료: 2.9% + $0.30/거래
+Studio	$229	101-150	모든 기본 기능	연간 계약 시 10% 할인
+Studio	$239	151-200	모든 기본 기능	무료 시험 없음, 데모 가능
+Studio	$269	201-250	모든 기본 기능	잠재 고객/비활성 학생 무료
+Studio (맞춤)	$348+	251+	모든 기본 기능, 커스텀 문의	
+•	연간 매출: 약 $21.9M (2025년 추정).
+2. WellnessLiving
+•	주요 기능 상세:
+o	Automated Marketing Tools: 이메일·SMS·푸시 알림으로 참여 유지. 태권도 도장에서 리마인더, 피드백, 프로모션 자동화, 로열티 보상.
+o	Belt Tracking: 벨트 랭킹·프로모션 추적. 태권도 도장에서 벨트 업데이트, 테스트 알림 자동화.
+o	Simple Family Scheduling and Payments: 가족 구성원 등록, 부모 계정 관리. 태권도 도장에서 예약·결제 간소화.
+o	Ensure Consistent Revenue: 맞춤 가격·자동 갱신. 태권도 도장에서 멤버십 플랜 설정, 예측 수익.
+o	Custom Branded App: 브랜드 앱으로 예약·결제. 태권도 도장에서 모바일로 일정·포인트 관리.
+o	Explorer™ Business Listing: 웰니스 디렉토리 노출. 태권도 도장에서 신규 학생 유치.
+o	Elevate™ Staff App: 스태프 모바일 관리. 태권도 도장에서 강사 이동 중 판매·관리.
+o	Achieve™ Client App: 클라이언트 서비스 예약. 태권도 도장에서 클래스 확인·대기 목록 참여.
+o	Branded Client Web Portal: 웹 포털로 체크인·예약. 태권도 도장에서 프론트 데스크 작업 감소.
+o	POS & Credit Card Processing: 반복 청구·카드 저장. 태권도 도장에서 결제·할인 처리.
+o	Email Notifications: 템플릿 알림. 태권도 도장에서 출석·결제·테스트 리마인더 전송.
+o	Email, Text, and Push Marketing Campaigns: 캠페인 생성. 태권도 도장에서 이벤트·클래스 홍보.
+o	Reviews, Referrals, and Rewards: 리뷰·추천으로 홍보. 태권도 도장에서 브랜드 지지자 전환.
+•	장점: 올인원 솔루션, 경쟁력 있는 가격, 우수한 지원, 현대적 인터페이스.
+•	단점: 일부 기능 제한, 높은 처리 수수료, 온보딩 지연.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Starter	$69	기본 예약, 지불	지불 처리 수수료: 2.9% + $0.30/거래
+Business	$199	마케팅, 앱 포함	첫 2개월 80% 할인 프로모션 가능
+BusinessPro	$349	고급 분석, 통합	무료 시험 30일
+Enterprise	문의	다중 위치, 커스텀	연간 계약 시 20% 할인
+•	연간 매출: 약 $74.1M (2025년 추정).
+3. Gymdesk
+•	주요 기능 상세:
+o	Membership Management and Attendance: 온보딩, 출석, 결제, 예약. 태권도 도장에서 동시 체크인.
+o	Ranking and Promotions: 벨트 랭크·프로모션 제어. 태권도 도장에서 드래그-앤-드롭 랭크 이동.
+o	Reporting: 수익·출석·성장 보고. 태권도 도장에서 재정 분석·의사 결정.
+o	Customer Support: 셀프 서비스·지원. 태권도 도장에서 온보딩 호출 지원.
+o	Integration with Existing Tools: Stripe·Zoom 통합. 태권도 도장에서 결제·일정 유지.
+o	Data Migration: 데이터 이전. 태권도 도장에서 멤버 데이터 몇 시간 내 이전.
+•	장점: 무술 특화, 직관적, 우수한 지원, 투명한 가격, 빠른 설정.
+•	단점: 아시아 시장 고가, 커스터마이징 부족, 일부 버그.
+•	가격 정책:
+티어	월 비용	활성 멤버 수	주요 포함 기능	추가 비용
+Basic	$75	1-50	예약, 출석, 지불, 벨트 추적	도어 액세스 $50/월
+Standard	$100	51-100	모든 기본 기능	지불 처리 수수료: 2.9% + $0.30/거래
+Pro	$150	101-200	모든 기본 기능	무료 시험 30일, 계약/취소 수수료 없음
+Enterprise	$200+	201+	모든 기본 기능	
+•	연간 매출: 약 $6.7M (2025년 추정).
+4. Mindbody
+•	주요 기능 상세:
+o	Global Network and Marketplace Listing: 글로벌 네트워크 나열. 태권도 도장에서 앱·웹으로 클래스·시험 예약.
+o	AI-Powered Messenger [ai]: 문의·예약 처리. 태권도 도장에서 24/7 자동 응답.
+o	Mindbody Capital for Funding: 자금 지원. 태권도 도장에서 시설 확장·장비 구매.
+o	Scheduling and Booking Features: 예약 간소화. 태권도 도장에서 온라인 클래스·레슨 예약.
+o	Staff Management Features: 스태프 일정·성과 추적. 태권도 도장에서 강사 관리.
+o	Payments and Family Accounts: 결제·가족 계정 관리. 태권도 도장에서 단일 계정 결제.
+o	Lead Management Dashboard: 영업 파이프라인 관리. 태권도 도장에서 리드 추적.
+o	Reporting and Performance Analysis: 성과 분석. 태권도 도장에서 유지율·티켓 가치 검토.
+o	Client Retention Tools: 진척 추적·인센티브. 태권도 도장에서 벨트 모니터링·보상.
+o	Third-Party Integrations: 타사 통합. 태권도 도장에서 ClassPass 연결.
+•	장점: 강력한 스케줄링·마케팅, 브랜디드 앱, 다양한 피트니스 지원.
+•	단점: 높은 비용, 복잡, 잦은 가격 인상, 고객 지원 문제.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Starter	$99	기본 예약, 지불, 보고	브랜디드 앱 $50-100/월
+Essentials	$129	마케팅 추가	마케팅 $50/월
+Ultimate	$199	고급 앱, 분석	지불 처리 수수료: 2.75% + $0.30/거래
+Enterprise	$699+	커스텀	무료 시험 14일, 연간 계약 15% 할인
+•	연간 매출: 약 $315.1M (2025년 추정).
+5. Kicksite
+•	주요 기능 상세:
+o	Attendance and Belt Tracking: 출석·벨트 추적. 태권도 도장에서 한 번 클릭 프로모션.
+o	Billing and Payment Processing: 자동 청구·실패 알림. 태권도 도장에서 월 수수료 자동화.
+o	Communication Tools: 이메일·텍스트 전송. 태권도 도장에서 리마인더·이벤트 알림.
+o	Lead Capture and Marketing Tools: 리드 캡처·랜딩 페이지. 태권도 도장에서 신규 학생 유치.
+o	Member Portal and Mobile Web App: 계정·등록 관리. 태권도 도장에서 자율 등록·결제.
+o	Website Design Services: 웹사이트 구축. 태권도 도장에서 일정·등록 쇼케이스.
+o	Transparent Pricing: 학생 수 기반 가격. 태권도 도장에서 예측 가능 비용.
+•	장점: 무술 특화, 직관적, 지속 개선, 우수한 지원.
+•	단점: 지불 스위칭 번거로움, 통계 왜곡, 모바일 앱 문제.
+•	가격 정책:
+티어	월 비용	활성 학생 수	주요 포함 기능	추가 비용
+Basic	$49	0-25	모든 기능 포함	지불 처리 수수료: 2.9% + $0.30/거래
+Standard	$99	26-50	모든 기능 포함	무료 시험 14일, 데모 필수
+Pro	$149	51-100	모든 기능 포함	연간 계약 시 20% 할인
+Enterprise	$199	100+	모든 기능 포함	
+•	연간 매출: 약 $4.3M (2025년 추정).
+6. Spark Membership
+•	주요 기능 상세:
+o	Membership Management Software: 운영 자동화. 태권도 도장에서 멤버십·청구 관리.
+o	Trial & Prospect Maximizer™: 트라이얼 전환. 태권도 도장에서 리드 자동 추적.
+o	Scheduling & Attendance Management: 예약·출석 추적. 태권도 도장에서 노쇼 감소.
+o	Marketing Platform: 마케팅 자동화. 태권도 도장에서 SMS·이메일 캠페인.
+o	Email Automation: 이메일 자동화. 태권도 도장에서 뉴스레터·프로모션 전송.
+o	SMS: 대량 SMS. 태권도 도장에서 참여 높임.
+o	P.O.S. Payments & Tracking: POS·인벤토리. 태권도 도장에서 판매·재고 추적.
+o	CRM: 멤버 정보 저장. 태권도 도장에서 세부 사항·출석 접근.
+o	Online Booking & Scheduling: 온라인 예약. 태권도 도장에서 인터페이스 예약.
+o	Landing Page Builder: 드래그-앤-드롭 빌더. 태권도 도장에서 프로모션 페이지.
+o	Checkout Pages: 온라인 판매. 태권도 도장에서 멤버십·이벤트 판매.
+o	Sales Funnels: 판매 퍼널. 태권도 도장에서 리드 생성 최적화.
+•	장점: 직관적, 무술 설계, 우수한 지원, 저렴.
+•	단점: 자동화 오류, 지불 버그, 이벤트 빌더 부족.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Basic	$149	멤버십, 스케줄링	SMS $0.05/메시지
+Pro	$199	마케팅, CRM 추가	지불 처리 수수료: 2.9% + $0.30/거래
+Enterprise	$299+	고급 자동화	무료 시험 14일, 연간 계약 15% 할인
+•	연간 매출: 공개된 추정치 없음 (지불 처리 $750M, 고객 2,000명).
+7. RhinoFit
+•	주요 기능 상세:
+o	Martial Arts Belt Management: 랭킹 맞춤화. 태권도 도장에서 테스트 타이밍·섀도 박스 설정.
+o	Automatic Payments: 결제 자동 처리. 태권도 도장에서 월 멤버십 청구.
+o	Email Marketing: 이메일 전송. 태권도 도장에서 뉴스레터·프로모션.
+o	Digital Waivers: 온라인 면책서. 태권도 도장에서 신규 학생 서명.
+o	Website Templates: 웹사이트 테마. 태권도 도장에서 등록·판매 촉진.
+•	장점: 시각적, 무술 적합, 합리적 가격, 강력 보고서.
+•	단점: 은행 계좌 문제, 설정 복잡, 브랜디드 앱 없음.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Start-Up	$0	20명 이하, 기본 기능	DAC (도어 액세스) $99/월
+Standard	$57	무제한 멤버, POS, 출석	지불 처리 수수료: 2.9% + $0.30/거래
+			Free Trial 30일, 연간 계약 10% 할인
+•	연간 매출: 공개된 추정치 없음.
+8. PushPress
+•	주요 기능 상세:
+o	Streamlined Billing and Payments: 청구 자동화. 태권도 도장에서 반복 결제·보고서 분석.
+o	Manage Members with Ease: CRM으로 데이터 조직. 태권도 도장에서 랭크 추적.
+o	Schedules, Simplified: 예약 자동화. 태권도 도장에서 앱 예약.
+o	Lead Generation and Conversion: 리드 캡처. 태권도 도장에서 메시지로 전환율 높임.
+o	Keep Members Coming Back: 관계 강화. 태권도 도장에서 설문·데이터 유지.
+o	Streamline Communication: SMS·이메일 알림. 태권도 도장에서 참여 높임.
+o	One App for Workouts & Skill Tracking: 워크아웃 로그. 태권도 도장에서 진척 공유.
+o	Powerful Program Builder: 프로그램 제작. 태권도 도장에서 벨트 계획 설계.
+o	Premium Workouts from Partners: 파트너 워크아웃. 태권도 도장에서 크로스 트레이닝.
+o	Personalized Data: AI 추천. 태권도 도장에서 목표 워크아웃 제안.
+o	Automate Check-Ins and Financial Transactions: 체크인·거래 자동화. 태권도 도장에서 앱 체크인.
+•	장점: 직관적, 우수한 지원, 합리적 가격, 모바일 앱 우수.
+•	단점: 웹 디자인 지연, 지불 문제, 온보딩 문제.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Core (Free)	$0	기본 스케줄링, 빌링 (2.19% + $0.30/거래)	마케팅 $50/월
+Core Pro	$159	고급 보고, 자동화 (1.99% + $0.30/거래)	무료 시험 14일, 연간 계약 20% 할인
+•	연간 매출: 약 $14.4M (2025년 추정).
+9. Glofox
+•	주요 기능 상세:
+o	Class Scheduling and Customization: 클래스 스케줄링. 태권도 도장에서 그룹·가상 클래스 설정.
+o	Business and Member Performance Insights: 인사이트 제공. 태권도 도장에서 수익·출석 모니터링.
+o	Staff Management Tools: 스태프 관리. 태권도 도장에서 일정·앱 관리.
+o	Student Attendance and Rewards Tracking: 출석·보상 추적. 태권도 도장에서 출석 기록·할인.
+o	Flexible Billing and Payment Solutions: 청구 유연화. 태권도 도장에서 반복·드랍인 결제.
+•	장점: 사용자 친화적, 시각적, COVID 대응 기능.
+•	단점: 높은 비용, 앱 문제, 투명성 부족, 고객 서비스 악화.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Basic	$110-150	1 위치, 기본 스케줄링	브랜디드 앱 $50/월
+Essential	$160-250	중형, 마케팅 추가	지불 처리 수수료: 2.9% + $0.30/거래
+Ultimate	$250+	고급 분석, 앱	무료 시험 14일, 계약 없음
+•	연간 매출: 약 $42M (2025년 추정).
+10. Clubworx
+•	주요 기능 상세:
+o	Membership and Family Management: 멤버십 관리. 태권도 도장에서 가족 계정·플랜 맞춤화.
+o	Class Kiosk Mode (Self Check-In): 셀프 체크인. 태권도 도장에서 태블릿 출석 추적.
+o	Custom Branded Mobile App: 브랜드 앱. 태권도 도장에서 예약·알림.
+o	Automated Grading System: 그레이딩 자동화. 태권도 도장에서 벨트 추적·이벤트 스케줄링.
+•	장점: 사용 쉬움, 무술 적합, 우수한 지원, 합리적 가격.
+•	단점: 지불 수수료 흡수, 설정 번거로움, 기능 제한.
+•	가격 정책:
+티어	월 비용	주요 포함 기능	추가 비용
+Basic	$0	20명 이하, 기본 기능	커스텀 웹 $50/월
+Standard	$89	무제한, POS, 출석	지불 처리 수수료: 2.9% + $0.30/거래
+Premium	$169	그레이딩, 마케팅	무료 시험 15일, 계약 없음
+•	연간 매출: 약 $19.5M (2025년 추정).
+11. Martialytics
+•	주요 기능 상세:
+o	Student Management: 등록·출석·벨트 추적. 태권도 도장에서 데이터 중앙화, 유지율 향상.
+o	Automated Billing and Payment Processing: 자동 청구·지불. 태권도 도장에서 수수료 자동화.
+o	Email/SMS Marketing: 마케팅. 태권도 도장에서 프로모션·리마인더 전송.
+o	Reporting and Analytics: 리포팅·분석. 태권도 도장에서 성장 인사이트 제공.
+o	Website Integration: 웹 통합. 태권도 도장에서 온라인 등록·스케줄링.
+o	Lead Management: 리드 관리. 태권도 도장에서 잠재 학생 추적.
+o	Mobile App Support: 모바일 앱. 태권도 도장에서 체크인·진척 확인.
+o	Unlimited Locations: 위치 무제한. 태권도 도장에서 다중 지점 관리.
+•	장점: 무술 특화, 간단 인터페이스, 이메일 무제한, 데이터 기반 인사이트.
+•	단점: 기능 세트 제한, 커스터마이징 부족, 학습 곡선.
+•	가격 정책:
+티어	월 비용	활성 학생 수	주요 포함 기능	추가 비용
+Basic	$69	0-50	모든 기능, 위치/이메일 무제한	지불 처리 수수료: 2%/거래
+Standard	$99	51-150	볼륨 할인	무료 시험 14일, 취소 시 환불 없음
+Pro	$149	151-300	모든 기능	연간 계약 시 10% 할인
+Enterprise	$199	300+	모든 기능	비활성 학생 무료
+•	연간 매출: 공개된 추정치 없음.
+

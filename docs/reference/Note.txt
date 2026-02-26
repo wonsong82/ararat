@@ -1,0 +1,44 @@
+User App (Website)
+	- Registration
+		- As self, or parent
+		- Phone verification
+		- Terms and condition
+	- Profile management
+		- can add multiple profile (children, if you registered as parent)
+		- membership status / renewal 
+	- 탈퇴
+		-  refund
+	- user level
+		- age group
+		- 띠 별로 (white belt, black belt etc)
+		- private lesson group
+
+
+
+Admin App
+	- Registration
+		- Registration Request Management
+			-  Register Approval
+		- Manual Registration
+	- Member Management
+		- Update log, alert (Notification)
+		- Membership Renewal (Membership Expiration)
+		- Retention attention alert (notification to the admin, notification to the user)
+	- Payment
+		- Refund, prorated (if not month to month)
+		- one time discount
+		- month to month recurring
+		- refund algorithm (when there is discount)
+
+
+	- TODO
+	- Notification
+
+
+	
+
+User app
+Admin app
+Attendance kiosk app
+Monitor app (optional)
+
