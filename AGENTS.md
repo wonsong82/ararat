@@ -369,3 +369,4 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - Use Mermaid for any diagrams (sequence, ER, flowchart)
 - The plan-confirm step is non-negotiable — no exceptions, even for "quick" changes
 - This project is currently in **IMP phase** — IMP.md is being created
+- One AGENTS.md at the project root is sufficient for most projects. For monorepos with truly independent apps (separate tech stacks, conventions, deployments), create an additional AGENTS.md in each app directory with app-specific overrides — the root AGENTS.md still holds shared rules
