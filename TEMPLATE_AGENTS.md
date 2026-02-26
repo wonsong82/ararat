@@ -21,6 +21,49 @@
 
 All diagrams use **Mermaid** format embedded in markdown files. 
 
+### Project Lifecycle (CRITICAL — Read First)
+
+Every project follows this lifecycle. The agent MUST detect the current phase and guide accordingly.
+
+#### Phase Detection
+
+On session start, check which documents exist:
+
+```
+1. Does docs/PRD.md exist?          → NO  → Start Phase: PRD
+2. Does docs/trd/README.md exist?    → NO  → Start Phase: TRD
+3. Does docs/IMP.md exist?           → NO  → Start Phase: IMP
+4. IMP.md exists                     → Read IMP.md → Resume implementation
+```
+
+**Always announce the detected phase to the user:**
+> "I see [PRD/TRD/IMP] exists but [next doc] is missing. We should work on [next doc] next."
+
+#### New Project Flow
+
+```
+PRD → TRD → IMP → Implementation
+```
+
+1. **PRD Phase**: Gather requirements from the user. Create `docs/PRD.md` with business goals, user stories, feature scope, and acceptance criteria. PRD defines **what** and **why**.
+2. **TRD Phase**: Translate PRD into technical specifications. Create `docs/trd/` directory with section files, index, and ADRs. TRD defines **how** — completely. After TRD, the PRD is never referenced during development.
+3. **IMP Phase**: Create `docs/IMP.md` with phased implementation plan. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file.
+4. **Implementation Phase**: Pick up tasks from IMP.md, follow the Workflow below for each code change.
+
+#### Adding a New Feature (Existing Project)
+
+```
+Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Implement
+```
+
+1. **Update PRD.md** — add the new feature's requirements and acceptance criteria
+2. **Create new TRD section** — `docs/trd/NN-new-feature.md` with full technical spec, cross-references, and Implementation Notes placeholder
+3. **Update `trd/README.md`** — add the new section to the Section Map table
+4. **Create ADR** — if the feature involves a technology choice, architectural pattern, or scope decision
+5. **Append to IMP.md** — add new tasks referencing the new TRD section
+6. **Implement** — follow the Workflow below
+
+
 ### Workflow (MANDATORY — every code change)
 
 ```
