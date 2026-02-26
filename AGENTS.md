@@ -47,7 +47,7 @@
 |----------|---------|----------|------------------|
 | **PRD.md** | High-level product description & requirements | Business goals, user stories, feature scope, acceptance criteria | Technical implementation details |
 | **TRD** | Technical details & implementation design — **living document** | `docs/trd/` directory with 21 section files, each with Implementation Notes. Index at `docs/trd/README.md`. ADRs in `docs/trd/adr/`. | Raw code dumps, implementation tracking/checklists |
-| **IMP.md** | Implementation plan & progress tracking | Step-by-step plans, task checkboxes, status, phase tracking | Product requirements, technical specs |
+| **IMP** | Implementation plan & progress tracking — **split by phase** | `docs/imp/` directory with phase files. Index at `docs/imp/README.md`. | Product requirements, technical specs |
 | **README.md** | End-user & developer usage guide | Setup, usage, configuration, API reference | Internal planning or tracking |
 
 
@@ -73,8 +73,8 @@ On session start, check which documents exist:
 ```
 1. Does docs/PRD.md exist?          → NO  → Start Phase: PRD
 2. Does docs/trd/README.md exist?    → NO  → Start Phase: TRD
-3. Does docs/IMP.md exist?           → NO  → Start Phase: IMP
-4. IMP.md exists                     → Read IMP.md → Resume implementation
+3. Does docs/imp/README.md exist?    → NO  → Start Phase: IMP
+4. imp/README.md exists              → Read imp/README.md → Resume implementation
 ```
 
 **Always announce the detected phase to the user:**
@@ -88,8 +88,9 @@ PRD → TRD → IMP → Implementation
 
 1. **PRD Phase**: Gather requirements from the user. Create `docs/PRD.md` with business goals, user stories, feature scope, and acceptance criteria. PRD defines **what** and **why**.
 2. **TRD Phase**: Translate PRD into technical specifications. Create `docs/trd/` directory with section files, index, and ADRs. TRD defines **how** — completely. After TRD, the PRD is never referenced during development.
-3. **IMP Phase**: Create `docs/IMP.md` with phased implementation plan. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file.
-4. **Implementation Phase**: Pick up tasks from IMP.md, follow the Workflow below for each code change.
+3. **IMP Phase**: Create `docs/imp/` directory with phased implementation plan. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file. Index at `docs/imp/README.md`, one file per phase.
+4. **Pre-Implementation Checkpoint**: Once PRD, TRD, and IMP are all finalized, ask the user: _"Project structure is defined. Should I tailor AGENTS.md to remove rules that don't apply to this project?"_ If confirmed, remove irrelevant sections and add a note: `<!-- Tailored on YYYY-MM-DD -->`.
+5. **Implementation Phase**: Pick up tasks from `imp/README.md`, follow the Workflow below for each code change.
 
 #### Adding a New Feature (Existing Project)
 
@@ -101,7 +102,7 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 2. **Create new TRD section** — `docs/trd/NN-new-feature.md` with full technical spec, cross-references, and Implementation Notes placeholder
 3. **Update `trd/README.md`** — add the new section to the Section Map table
 4. **Create ADR** — if the feature involves a technology choice, architectural pattern, or scope decision
-5. **Append to IMP.md** — add new tasks referencing the new TRD section
+5. **Append to relevant IMP phase file** — add new tasks referencing the new TRD section, update `imp/README.md` progress
 6. **Implement** — follow the Workflow below
 
 
@@ -112,7 +113,7 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 │                 BEFORE ANY CODE CHANGE               │
 │                                                      │
 │  1. READ trd/README.md — find relevant TRD sections  │
-│  2. READ IMP.md  — understand current progress       │
+│  2. READ imp/README.md — find current phase & progress │
 │  3. VERIFY — does IMP fully capture what TRD         │
 │     describes? If GAP → ASK & CLARIFY first          │
 │  4. Update TRD / IMP if changes are needed           │
@@ -130,7 +131,7 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 ├──────────────────────────────────────────────────────┤
 │                 AFTER ANY CODE CHANGE                │
 │                                                      │
-│  8. UPDATE IMP.md  — mark tasks done, add new ones   │
+│  8. UPDATE relevant IMP phase file — mark tasks done   │
 │  9. UPDATE relevant TRD file — Implementation Notes   │
 │  10. UPDATE PRD.md — if feature scope changed        │
 │  11. UPDATE README  — if user-facing behavior changed │
@@ -150,10 +151,10 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 
 ### Documentation Rules
 
-- **NEVER** implement without consulting `trd/README.md` and IMP.md first
-- **NEVER** leave IMP.md out of sync after code changes
+- **NEVER** implement without consulting `trd/README.md` and `imp/README.md` first
+- **NEVER** leave IMP out of sync after code changes
 - **NEVER** dump raw code into TRD.md — describe logic in readable prose
-- **ALWAYS** verify IMP.md captures everything in TRD.md before starting
+- **ALWAYS** verify IMP captures everything in TRD before starting
 - **ALWAYS** clarify gaps between TRD and IMP before implementing
 
 ### TRD Completeness Rule (CRITICAL)
@@ -322,6 +323,64 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - Never reuse an ADR number — deprecated ADRs keep their number
 - If superseded, add `Superseded by ADR-NNN` to status
 
+### IMP Structure & File Formats
+
+The IMP is organized as a directory of phase files — NOT a single monolith. This keeps each phase focused and manageable for AI context loading.
+
+#### Directory Structure
+
+```
+docs/
+└── imp/
+    ├── README.md                    # Index — overall progress, phase summary, dependency notes
+    └── phase-N-short-name.md        # One file per implementation phase
+```
+
+#### File Naming
+
+- **IMP phase files**: `phase-N-short-name.md` — single digit + kebab-case name (e.g., `phase-0-foundation.md`, `phase-1-mvp-core.md`, `phase-2-enhanced.md`)
+- Numbers are sequential starting from 0
+
+#### IMP Phase File Format
+
+Every IMP phase file follows this exact format:
+
+```markdown
+# Phase N — Phase Name
+
+**Status**: Not Started | In Progress | Completed  
+**Tasks**: NN | **Completed**: 0 | **Progress**: 0%
+
+---
+
+> Brief description of this phase's scope and prerequisites.
+
+### N.1 Feature/Subsystem Name
+
+- [ ] **Task name** — `docs/trd/NN-section.md` — Brief scope description
+- [ ] **Task name** — `docs/trd/NN-section.md` — Brief scope description
+```
+
+#### imp/README.md Format (Index)
+
+The index file is the entry point for IMP navigation. It MUST contain:
+
+1. **Overall progress summary**:
+
+```markdown
+**Total Tasks**: NN | **Completed**: 0 | **Progress**: 0%
+```
+
+2. **Phase summary table**:
+
+```markdown
+| Phase | File | Status | Tasks | Progress |
+|-------|------|--------|-------|----------|
+| 0 | [Foundation](./phase-0-foundation.md) | Not Started | NN | 0% |
+```
+
+3. **Dependency notes** between phases
+
 ### Plan-and-Confirm Rule (CRITICAL)
 
 - **NEVER** start writing or modifying code without presenting a plan first
@@ -355,6 +414,15 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - Never commit `.env` files — use `.env.example` as template
 - Never hardcode credentials, API keys, or secrets
 
+### Docker-First Development
+
+- **Docker-first** for all backend services, databases, and infrastructure — use `docker-compose.yml` at project root
+- Native client apps (iOS, Android, desktop) run on the host but connect to Dockerized services
+- If the entire stack CAN run in Docker, it SHOULD — consistency across dev environments is the priority
+- **NEVER** require developers to install databases, message queues, or other infrastructure locally
+- Include a `Makefile` or npm/pnpm scripts for common Docker operations (`make up`, `make down`, `make logs`)
+- `.env.example` must include all environment variables needed for Docker Compose
+
 ### Testing Conventions
 
 - **EVERY** new feature or bug fix must include tests
@@ -387,6 +455,25 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - **If a verification fails**: fix it immediately before proceeding — do not stack more changes on top of broken code
 - This prevents cascading errors that are exponentially harder to debug
 
+### AGENTS.md as Living Document
+
+AGENTS.md is a **living document** that evolves alongside the project. The agent auto-updates it at each lifecycle milestone — never requiring manual edits for project context.
+
+| Trigger | What to update in AGENTS.md |
+|---|---|
+| After PRD created | Populate `## PROJECT OVERVIEW` — project description, applications, target users, domain terms, key constraints |
+| After TRD created | Add key architecture decisions, tech stack summary, ADR highlights to PROJECT OVERVIEW |
+| After IMP created | Update current phase note in NOTES section |
+| During implementation | Update WHERE TO LOOK with actual paths, conventions, directory structure as they emerge |
+| After features implemented | Refine PROJECT OVERVIEW with actual tech choices, deviations from original plan |
+| After ADR created | Note relevant architectural constraints in PROJECT OVERVIEW |
+
+**Rules:**
+- Updates are **immediate** — not batched at end of session
+- Only update sections relevant to the change — do not rewrite the entire file
+- Preserve all existing rules and conventions — only add/update project-specific context
+- If AGENTS.md conflicts with TRD, the TRD takes precedence — update AGENTS.md to match
+
 ---
 
 ## WHERE TO LOOK
@@ -395,11 +482,11 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 |------|----------|-------|
 | Product requirements | `docs/PRD.md` | What to build and why |
 | Technical spec (index) | `docs/trd/README.md` | Start here — section map with dependencies |
-| Implementation status | `docs/IMP.md` | What's done, what's next |
+| Implementation status (index) | `docs/imp/README.md` | Start here — phase summary and progress |
+| IMP phase files | `docs/imp/phase-*.md` | Individual phase task lists |
 | User/dev guide | `docs/README.md` | How to use the application |
 | Reference materials | `docs/reference/` | Note.txt, Requirements.txt, Reference.txt |
 | Agent knowledge | `AGENTS.md` | This file |
-| Agent template | `TEMPLATE_AGENTS.md` | Generic template for all projects |
 | TRD section files | `docs/trd/*.md` | Individual feature/system specs |
 | Architecture decisions | `docs/trd/adr/` | ADR files with context, decision, consequences |
 
@@ -407,9 +494,9 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 ## NOTES
 
 - Docs-first workflow: PRD → TRD → IMP → **Plan → User Confirm** → Code → Update Docs → Validate → Auto-Commit
-- When picking up work, start by reading IMP.md to find current state
+- When picking up work, start by reading `imp/README.md` to find current state
 - During implementation, reference `docs/trd/` only — never go back to PRD.md for technical details
 - Use Mermaid for any diagrams (sequence, ER, flowchart)
 - The plan-confirm step is non-negotiable — no exceptions, even for "quick" changes
-- This project is currently in **IMP phase** — IMP.md is being created
+- This project is currently in **IMP phase** — `docs/imp/` is being created
 - One AGENTS.md at the project root is sufficient for most projects. For monorepos with truly independent apps (separate tech stacks, conventions, deployments), create an additional AGENTS.md in each app directory with app-specific overrides — the root AGENTS.md still holds shared rules
