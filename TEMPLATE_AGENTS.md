@@ -99,6 +99,91 @@ The TRD is NOT a static blueprint — it is a **living system map** that evolves
 - If you need to understand how a feature works, read the TRD first — not the code
 - If the TRD’s Implementation Notes are missing or stale, **update them before proceeding**
 
+### TRD Structure & File Formats
+
+The TRD is organized as a directory of individual files — NOT a single monolith. This enables targeted reading and keeps files manageable as Implementation Notes grow.
+
+#### Directory Structure
+
+```
+docs/
+└── trd/
+    ├── README.md                    # Index — Section Map, ADR summary, glossary
+    ├── NN-short-name.md             # One file per TRD section
+    └── adr/
+        ├── README.md                # ADR index with template
+        └── NNN-short-name.md        # One file per architecture decision
+```
+
+#### File Naming
+
+- **TRD sections**: `NN-short-name.md` — zero-padded 2-digit number + kebab-case name (e.g., `01-system-architecture.md`, `07-registration.md`, `14-parent-feed.md`)
+- **ADR files**: `NNN-short-name.md` — zero-padded 3-digit number + kebab-case name (e.g., `001-us-market-only.md`, `010-trd-living-document.md`)
+- Numbers are sequential and never reused — deprecated files keep their number
+
+#### TRD Section File Format
+
+Every TRD section file follows this exact format:
+
+```markdown
+# N. Section Title
+
+**Related TRDs**: [02-multi-tenancy](./02-multi-tenancy.md), [03-data-model](./03-data-model.md)  
+**Related ADRs**: [ADR-001](./adr/001-us-market-only.md)  
+**Phase**: MVP (Phase 1)
+
+---
+
+[Section content: specs, flows, data models, diagrams, business rules...]
+
+### Implementation Notes
+
+> _This section will be updated as the feature is implemented._
+
+- **Module location**: _TBD_
+- **Key files**: _TBD_
+- **Actual endpoints**: _TBD_
+- **Deviations from spec**: _None yet_
+- **Edge cases discovered**: _None yet_
+- **Configuration**: _TBD_
+```
+
+**Cross-reference rules**:
+- **Related TRDs**: Link to files this section depends on or closely interacts with
+- **Related ADRs**: Link to architecture decisions that constrain this section's implementation
+- **Phase**: Which development phase this section belongs to
+- Use `_None_` when there are no related ADRs
+- Use `All sections` for cross-cutting concerns (performance, infrastructure)
+
+#### trd/README.md Format (Index)
+
+The index file is the entry point for all TRD navigation. It MUST contain:
+
+1. **Section Map table** with these exact columns:
+
+```markdown
+| # | File | Covers | Key Entities | Depends On | Phase |
+|---|------|--------|-------------|------------|-------|
+| 1 | [System Architecture](./01-system-architecture.md) | High-level arch, services | All services | — | MVP |
+```
+
+   - **#**: Section number
+   - **File**: Linked filename
+   - **Covers**: What this section specifies (brief)
+   - **Key Entities**: Data models / domain objects defined here
+   - **Depends On**: Other section numbers this section references
+   - **Phase**: Development phase (MVP, Phase 2, etc.)
+
+2. **ADR summary table**:
+
+```markdown
+| ADR | Decision | Affects |
+|-----|----------|---------|
+| [001](./adr/001-example.md) | Decision title | Section numbers affected |
+```
+
+3. **Glossary**: Domain-specific terms and acronyms
+
 ### TRD Navigation Protocol (AI Agents)
 
 The TRD is split into individual files for targeted reading. **Never read all TRD files** — use the index to find what you need.
@@ -125,6 +210,34 @@ Architecture Decision Records live in `docs/trd/adr/`. Each ADR captures:
 - Deciding compliance strategies
 
 **Format**: `NNN-short-name.md` (e.g., `001-us-market-only.md`). See `docs/trd/adr/README.md` for template.
+
+#### ADR File Format
+
+```markdown
+# ADR-NNN: Title
+
+**Status**: Proposed | Accepted | Deprecated | Superseded  
+**Date**: YYYY-MM-DD  
+**Deciders**: [who made this decision]
+
+## Context
+[What prompted this decision]
+
+## Decision
+[What was decided]
+
+## Alternatives Considered
+[What else was on the table]
+
+## Consequences
+[Positive and negative impacts]
+
+**Affects**: [list of TRD sections impacted]
+```
+
+- Never reuse an ADR number — deprecated ADRs keep their number
+- If superseded, add `Superseded by ADR-NNN` to status
+
 ### Plan-and-Confirm Rule (CRITICAL)
 
 - **NEVER** start writing or modifying code without presenting a plan first
