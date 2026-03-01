@@ -1,7 +1,7 @@
 # Phase 0 — Foundation
 
 **Status**: Not Started  
-**Tasks**: 20 | **Completed**: 0 | **Progress**: 0%
+**Tasks**: 24 | **Completed**: 0 | **Progress**: 0%
 
 ---
 
@@ -10,8 +10,11 @@
 ### 0.1 Project Scaffolding & Infrastructure
 
 - [ ] **Monorepo setup** — `docs/trd/01-system-architecture.md` — Initialize project structure, package manager, workspace config, linter, formatter, TypeScript config
-- [ ] **Docker Compose environment** — `docs/trd/21-infrastructure.md` — PostgreSQL, Redis, LocalStack (S3) containers, Makefile with `make up`, `make down`, `make logs`, `.env.example`
-- [ ] **CI/CD pipeline skeleton** — `docs/trd/21-infrastructure.md` — GitHub Actions for lint, type-check, test on every push; Docker image build on merge to main
+- [ ] **Docker Compose environment** — `docs/trd/22-infrastructure.md` — PostgreSQL, Redis, LocalStack (S3) containers, Makefile with `make up`, `make down`, `make logs`, `.env.example`
+- [ ] **CI/CD pipeline skeleton** — `docs/trd/22-infrastructure.md` — GitHub Actions for lint, type-check, test on every push; Docker image build on merge to main
+- [ ] **Message queue setup (SQS)** — `docs/trd/22-infrastructure.md` — SQS queue configuration, dead-letter queues, retry logic with exponential backoff, async dispatch for notifications and batch jobs
+- [ ] **Monitoring & alerting infrastructure** — `docs/trd/22-infrastructure.md` — CloudWatch metrics (API response time, error rate, DB latency, cache hit rate, queue depth), alert rules, real-time system health dashboard
+- [ ] **Staging environment configuration** — `docs/trd/22-infrastructure.md` — Staging environment with anonymized production data copy, auto-deploy on commit, smoke tests, blue-green deployment config
 
 ### 0.2 Database & Multi-Tenancy
 
@@ -38,12 +41,13 @@
 
 - [ ] **i18n framework setup** — `docs/trd/06-i18n.md` — Translation key infrastructure, locale files (`en.json`, `ko.json`, `es.json`), language detection from JWT/Accept-Language header
 - [ ] **Server-side template rendering** — `docs/trd/06-i18n.md` — Language-aware notification template rendering with personalization tokens (`{{member_name}}`, `{{gym_name}}`, etc.)
+- [ ] **Client-side i18n setup** — `docs/trd/06-i18n.md` — React i18n library integration, locale file loading (en.json, ko.json, es.json), key-based translations, date/time/currency formatting per locale (Korean: YYYY년 MM월 DD일, Spanish: DD/MM/YYYY), cultural UX patterns (Korean honorifics, Spanish formal)
 
 ### 0.6 File Storage
 
-- [ ] **S3 integration & presigned uploads** — `docs/trd/18-file-storage.md` — Presigned URL generation, direct client upload to S3, upload confirmation endpoint, file metadata storage, size limits
-- [ ] **CDN configuration** — `docs/trd/18-file-storage.md` — CloudFront distribution, signed URLs for private content, cache TTL policies (1 day photos, 1 hour certificates)
+- [ ] **S3 integration & presigned uploads** — `docs/trd/19-file-storage.md` — Presigned URL generation, direct client upload to S3, upload confirmation endpoint, file metadata storage, size limits
+- [ ] **CDN configuration** — `docs/trd/19-file-storage.md` — CloudFront distribution, signed URLs for private content, cache TTL policies (1 day photos, 1 hour certificates)
 
 ### 0.7 Testing & Quality
 
-- [ ] **Testing framework setup** — `docs/trd/21-infrastructure.md` — Unit test runner, integration test setup with test database, coverage reporting, test utilities (factories, fixtures)
+- [ ] **Testing framework setup** — `docs/trd/22-infrastructure.md` — Unit test runner, integration test setup with test database, coverage reporting, test utilities (factories, fixtures)
