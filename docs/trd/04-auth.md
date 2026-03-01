@@ -1,7 +1,7 @@
 # 4. Authentication & Authorization
 
-**Related TRDs**: [02-multi-tenancy](./02-multi-tenancy.md), [03-data-model](./03-data-model.md), [05-api-design](./05-api-design.md)  
-**Related ADRs**: [ADR-001](./adr/001-us-market-only.md)  
+**Related TRDs**: [02-multi-tenancy](./02-multi-tenancy.md), [03-data-model](./03-data-model.md), [05-api-design](./05-api-design.md), [07-web-frontend-architecture](./07-web-frontend-architecture.md)  
+**Related ADRs**: [ADR-001](./adr/001-us-market-only.md), [ADR-012](./adr/012-react-vite-frontend.md)  
 **Phase**: MVP (Phase 1)
 
 ---
@@ -62,6 +62,96 @@
 - If valid: issue new JWT and refresh token.
 - If invalid: return 401 Unauthorized, client must re-authenticate.
 
+### Frontend Authentication
+
+This section specifies the client-side authentication UX for all four applications. For component library details, see [TRD 07 — Web Frontend Architecture](./07-web-frontend-architecture.md). For backend endpoint contracts, see the flows above.
+
+#### Parent App — Phone OTP Frontend Flow
+
+1. Parent navigates to `/login`.
+2. Screen shows: phone number `Input` field (US +1 format), language selector (EN/KO/ES `RadioGroup`), "Send Code" `Button`.
+3. Client validates phone format with Zod schema before sending.
+4. On "Send Code": call `POST /api/v1/auth/otp/send` with `{ phone }`, button shows Spinner.
+5. Screen transitions to OTP entry: 6 individual digit `Input` fields with auto-advance focus on each digit entry.
+6. 60-second countdown timer before "Resend Code" button becomes active.
+7. On "Verify": call `POST /api/v1/auth/otp/verify` with `{ phone, code }`.
+8. If valid: store access token in Zustand auth store (memory only, NEVER localStorage), decode JWT for user info, redirect to `/`.
+9. If invalid: inline error "Invalid code. Please try again." Up to 3 attempts, then "Too many attempts. Please request a new code." with resend button.
+10. If phone not registered: server auto-creates account, frontend proceeds same as valid.
+
+#### Admin App — Email + Password + 2FA Frontend Flow
+
+1. Admin navigates to `/login`.
+2. Screen shows: email `Input`, password `Input` (with visibility toggle), "Login" `Button`, "Forgot password" link.
+3. On "Login": call `POST /api/v1/auth/login` with `{ email, password }`.
+4. If credentials valid: server returns `{ requires2fa: true, tempToken }`, screen transitions to 2FA entry.
+5. 2FA screen: 6-digit TOTP `Input` with auto-advance, "Verify" `Button`.
+6. On "Verify": call `POST /api/v1/auth/2fa/verify` with `{ tempToken, code }`.
+7. If valid: store access token, redirect to `/`.
+8. If credentials invalid: "Invalid email or password." After 5 failures: "Account locked. Try again in 15 minutes."
+9. If 2FA invalid: "Invalid code. Please try again."
+
+#### Token Storage Strategy
+
+| Token | Storage | Lifetime |
+|-------|---------|----------|
+| Access token (JWT) | Zustand store (in-memory only) | 1 hour (parent), 8 hours (admin) |
+| Refresh token | httpOnly, Secure, SameSite=Strict cookie (set by server) | 30 days |
+
+Access tokens NEVER written to localStorage/sessionStorage. Page refresh requires silent refresh.
+
+#### Auto-Refresh on App Load
+
+1. On app initialization (before rendering protected routes): call `POST /api/v1/auth/refresh` (cookie sent automatically).
+2. If success: store new access token in Zustand, proceed to requested route.
+3. If failure: redirect to `/login`.
+
+#### Protected Route Guard (TanStack Router)
+
+- `_auth.tsx` layout route checks `isAuthenticated` in Zustand auth store via `beforeLoad` hook.
+- If not authenticated: `throw redirect({ to: '/login' })`.
+- If token expired: attempt silent refresh before redirecting.
+- Role-based protection: admin-only routes check `user.role` and redirect if insufficient.
+
+#### Auth Zustand Store Interface
+
+```typescript
+interface AuthState {
+  user: {
+    id: string;
+    tenantId: string;
+    role: "Owner" | "Manager" | "Instructor" | "Parent" | "Member";
+    language: "en" | "ko" | "es";
+    name: string;
+    phone?: string;
+    email?: string;
+  } | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  setAuth: (user: AuthState["user"], token: string) => void;
+  clearAuth: () => void;
+}
+```
+
+#### Logout Flow
+
+1. Call `POST /api/v1/auth/logout` (server revokes refresh token, clears cookie).
+2. Call `clearAuth()` in Zustand.
+3. Call `queryClient.clear()` to purge cached data.
+4. Redirect to `/login`.
+
+#### Kiosk App — No User Auth
+
+- Kiosk authenticates via device token (issued during device registration by admin).
+- Device token stored in iOS Keychain.
+- No user login screen on kiosk — it's a shared device.
+
+#### Monitor App — Token via URL or Device Registration
+
+- Option A: URL token `https://monitor.ararat.app?token=<jwt>` (JWT with tenant_id, no user_id, read-only scope).
+- Option B: Device registration (admin registers display device, system issues long-lived device token).
+- No login screen — display auto-authenticates.
 ### Role-Based Access Control (RBAC)
 
 | Resource | Owner | Manager | Instructor | Parent | Member |

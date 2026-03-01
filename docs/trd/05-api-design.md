@@ -1,6 +1,6 @@
 # 5. API Design
 
-**Related TRDs**: [04-auth](./04-auth.md), [18-file-storage](./18-file-storage.md)  
+**Related TRDs**: [04-auth](./04-auth.md), [07-web-frontend-architecture](./07-web-frontend-architecture.md), [19-file-storage](./19-file-storage.md)  
 **Related ADRs**: [ADR-008](./adr/008-api-first-restful-backend.md)  
 **Phase**: MVP (Phase 1)
 
