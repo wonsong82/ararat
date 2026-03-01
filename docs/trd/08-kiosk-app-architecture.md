@@ -41,10 +41,29 @@ The Ararat Kiosk App is a native iOS application designed for iPad deployment at
 
 The kiosk app follows the **MVVM (Model-View-ViewModel)** pattern with SwiftUI. ViewModels own business logic and state; Views are declarative and stateless; Models represent domain data; Services encapsulate infrastructure concerns (camera, ML, network, storage).
 
+### Project Position
+
+The kiosk app lives at `kiosk/` in the Ararat project root. It is a native Xcode project — completely independent of the JavaScript/TypeScript tooling used by `api/` and `web/`. No pnpm, no npm, no shared packages.
+
+```
+ararat/
+├── api/           # NestJS backend (standalone)
+├── web/           # React monorepo (pnpm workspaces)
+├── kiosk/         # ← iPad app (Swift/Xcode) — this TRD
+│   ├── AraratKiosk/
+│   ├── AraratKiosk.xcodeproj
+│   ├── AraratKioskTests/
+│   └── README.md
+├── docs/
+└── ...
+```
+
+The kiosk communicates with the backend exclusively via HTTPS REST API calls (see Section 8.8). It does NOT import any shared types, schemas, or packages from the web frontend.
+
 ### Directory Structure
 
 ```
-AraratKiosk/
+kiosk/AraratKiosk/
 ├── App/
 │   ├── AraratKioskApp.swift         # App entry point
 │   └── AppDelegate.swift            # Background tasks, push notifications

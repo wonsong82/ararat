@@ -114,12 +114,54 @@ Fullscreen web app designed for 1920×1080 TV displays. No user interaction — 
 
 Node.js + NestJS RESTful API serving all 4 client applications. API-first design — every feature is accessible through documented REST endpoints. Modular architecture with domain-scoped NestJS modules. Multi-tenant with tenant context propagated via middleware. PostgreSQL for persistence, Redis for caching/sessions/queues, S3 for file storage. See module structure below.
 
+### Project Folder Structure
+
+```
+ararat/
+├── api/                        # NestJS backend — standalone, own package.json
+│   ├── src/                    # NestJS modules (auth, member, attendance, etc.)
+│   ├── test/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── tsconfig.json
+├── web/                        # React monorepo (pnpm workspaces scoped here)
+│   ├── pnpm-workspace.yaml     # Scoped to web/ only
+│   ├── tsconfig.base.json
+│   ├── .eslintrc.cjs
+│   ├── .prettierrc
+│   ├── packages/
+│   │   ├── ui/                 # shadcn/ui shared component library
+│   │   ├── api-client/         # HTTP client + TanStack Query hooks
+│   │   └── shared/             # Frontend-only: Zod schemas, types, constants, i18n
+│   ├── app/                    # Parent/Member App (React + Vite)
+│   ├── admin/                  # Admin App (React + Vite)
+│   └── monitor/                # Monitor App (React + Vite)
+├── kiosk/                      # iPad app (Swift/Xcode) — completely independent
+│   ├── AraratKiosk/
+│   ├── AraratKiosk.xcodeproj
+│   └── README.md
+├── docs/                       # PRD, TRD, IMP
+├── docker-compose.yml          # Local dev: PostgreSQL, Redis, LocalStack
+├── .env.example
+├── Makefile
+├── README.md
+└── AGENTS.md
+```
+
+**Key structural decisions:**
+
+- **`api/`** is a standalone Node.js project with its own `package.json`. It does NOT share packages with `web/`. Backend validates with NestJS `class-validator` + DTOs.
+- **`web/`** is a pnpm workspace monorepo. `pnpm-workspace.yaml` lives inside `web/`, NOT at the project root. Only web apps share packages (`ui`, `api-client`, `shared`). Frontend validates with Zod.
+- **`kiosk/`** is a native Xcode project. No JavaScript tooling. Completely independent of `api/` and `web/`.
+- **`docker-compose.yml`** at the project root is for local development only (PostgreSQL, Redis, LocalStack for S3).
+- **Each app deploys independently**: `api/` → Docker/ECS Fargate, `web/*` → Vite build → S3 + CloudFront, `kiosk/` → TestFlight/App Store.
+
 ### NestJS Module Structure
 
 The backend is organized into domain-scoped NestJS modules. Each module encapsulates its own controllers, services, entities, and DTOs:
 
 ```
-src/
+api/src/
 ├── auth/          # JWT, OTP, 2FA, RBAC guards
 ├── member/        # Registration, profiles, levels, withdrawal
 ├── attendance/    # Check-in processing, audit trail, absence alerts

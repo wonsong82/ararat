@@ -16,41 +16,40 @@ All technology choices reference [ADR-012](./adr/012-react-vite-frontend.md) (Re
 
 ## 1. Monorepo Frontend Structure
 
-All three web applications and shared packages live in a single monorepo managed with **pnpm workspaces**. Each app is an independent Vite build target; shared packages are consumed as internal workspace dependencies.
+All three web applications and shared packages live under the `web/` directory, managed with **pnpm workspaces**. The `pnpm-workspace.yaml` file is scoped to `web/` — it does NOT live at the project root. Each app is an independent Vite build target; shared packages are consumed as internal workspace dependencies. The backend API (`api/`) is a separate standalone project — see [TRD 01](./01-system-architecture.md).
 
 ```
-ararat/
-├── apps/
-│   ├── parent/                        # Parent/Member App
-│   │   ├── src/
-│   │   │   ├── routes/                # TanStack Router file-based routes
-│   │   │   ├── components/            # App-specific components
-│   │   │   ├── stores/                # Zustand stores (auth, ui)
-│   │   │   ├── hooks/                 # App-specific hooks
-│   │   │   ├── lib/                   # Utilities specific to parent app
-│   │   │   ├── main.tsx               # Entry point
-│   │   │   └── routeTree.gen.ts       # Auto-generated route tree
-│   │   ├── public/
-│   │   ├── index.html
-│   │   ├── vite.config.ts
-│   │   ├── tailwind.config.ts         # Extends shared preset
-│   │   └── tsconfig.json              # Extends root tsconfig
-│   ├── admin/                         # Admin App (same structure)
-│   └── monitor/                       # Monitor App (same structure)
+web/
+├── app/                              # Parent/Member App
+│   ├── src/
+│   │   ├── routes/                   # TanStack Router file-based routes
+│   │   ├── components/               # App-specific components
+│   │   ├── stores/                   # Zustand stores (auth, ui)
+│   │   ├── hooks/                    # App-specific hooks
+│   │   ├── lib/                      # Utilities specific to parent app
+│   │   ├── main.tsx                  # Entry point
+│   │   └── routeTree.gen.ts          # Auto-generated route tree
+│   ├── public/
+│   ├── index.html
+│   ├── vite.config.ts
+│   ├── tailwind.config.ts            # Extends shared preset
+│   └── tsconfig.json                 # Extends web/tsconfig.base.json
+├── admin/                            # Admin App (same structure)
+├── monitor/                          # Monitor App (same structure)
 ├── packages/
-│   ├── ui/                            # Shared component library
+│   ├── ui/                           # Shared component library
 │   │   ├── src/
-│   │   │   ├── components/            # shadcn/ui + custom components
-│   │   │   ├── hooks/                 # Shared UI hooks
-│   │   │   ├── lib/                   # cn() utility, theme helpers
-│   │   │   └── index.ts               # Named re-exports
-│   │   ├── tailwind.config.ts         # Base Tailwind preset (design tokens)
+│   │   │   ├── components/           # shadcn/ui + custom components
+│   │   │   ├── hooks/                # Shared UI hooks
+│   │   │   ├── lib/                  # cn() utility, theme helpers
+│   │   │   └── index.ts              # Named re-exports
+│   │   ├── tailwind.config.ts        # Base Tailwind preset (design tokens)
 │   │   ├── package.json
 │   │   └── tsconfig.json
-│   ├── api-client/                    # Shared API client + TanStack Query hooks
+│   ├── api-client/                   # Shared API client + TanStack Query hooks
 │   │   ├── src/
-│   │   │   ├── client.ts              # Typed fetch wrapper (ky)
-│   │   │   ├── hooks/                 # Query/mutation hooks by domain
+│   │   │   ├── client.ts             # Typed fetch wrapper (ky)
+│   │   │   ├── hooks/                # Query/mutation hooks by domain
 │   │   │   │   ├── members.ts
 │   │   │   │   ├── attendance.ts
 │   │   │   │   ├── payments.ts
@@ -63,13 +62,13 @@ ararat/
 │   │   │   │   ├── auth.ts
 │   │   │   │   ├── settings.ts
 │   │   │   │   └── files.ts
-│   │   │   ├── types/                 # API response/request types
+│   │   │   ├── types/                # API response/request types
 │   │   │   └── index.ts
 │   │   ├── package.json
 │   │   └── tsconfig.json
-│   └── shared/                        # Shared types, schemas, constants, i18n
+│   └── shared/                       # Frontend-only: Zod schemas, types, constants, i18n
 │       ├── src/
-│       │   ├── schemas/               # Zod validation schemas (shared with backend)
+│       │   ├── schemas/              # Zod validation schemas (frontend validation only)
 │       │   │   ├── member.ts
 │       │   │   ├── attendance.ts
 │       │   │   ├── payment.ts
@@ -79,9 +78,9 @@ ararat/
 │       │   │   ├── newsletter.ts
 │       │   │   ├── class.ts
 │       │   │   └── settings.ts
-│       │   ├── types/                 # TypeScript types & interfaces
-│       │   ├── constants/             # Enums, belt levels, roles, error codes
-│       │   ├── i18n/                  # Translation files (en/, ko/, es/)
+│       │   ├── types/                # TypeScript types & interfaces
+│       │   ├── constants/            # Enums, belt levels, roles, error codes
+│       │   ├── i18n/                 # Translation files (en/, ko/, es/)
 │       │   └── index.ts
 │       ├── package.json
 │       └── tsconfig.json
@@ -93,13 +92,17 @@ ararat/
 
 ### Workspace Configuration
 
-`pnpm-workspace.yaml`:
+`pnpm-workspace.yaml` (inside `web/`):
 
 ```yaml
 packages:
-  - "apps/*"
+  - "app"
+  - "admin"
+  - "monitor"
   - "packages/*"
 ```
+
+> **Note:** `pnpm-workspace.yaml` lives inside `web/`, NOT at the project root. Only web applications share packages — the backend API (`api/`) is a standalone project with its own validation (NestJS class-validator + DTOs).
 
 ### Tailwind Preset Extension
 
@@ -112,23 +115,23 @@ export const config = {
   presets: [sharedPreset],
   content: [
     "./src/**/*.{ts,tsx}",
-    "../../packages/ui/src/**/*.{ts,tsx}",
+    "../packages/ui/src/**/*.{ts,tsx}",
   ],
 };
 ```
 
 ### TypeScript Config Extension
 
-Each app's `tsconfig.json` extends the root `tsconfig.base.json` and adds path aliases:
+Each app's `tsconfig.json` extends `web/tsconfig.base.json` and adds path aliases:
 
 ```json
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@ararat/ui": ["../../packages/ui/src"],
-      "@ararat/api-client": ["../../packages/api-client/src"],
-      "@ararat/shared": ["../../packages/shared/src"],
+      "@ararat/ui": ["../packages/ui/src"],
+      "@ararat/api-client": ["../packages/api-client/src"],
+      "@ararat/shared": ["../packages/shared/src"],
       "~/*": ["./src/*"]
     }
   }
@@ -538,21 +541,22 @@ Zustand stores use the `persist` middleware for stores that survive page refresh
 
 ## 7. Form Handling Pattern
 
-All forms across the three apps use **React Hook Form v7** with the **Zod resolver** for validation. Zod schemas are imported from `packages/shared/` — the same schemas used by NestJS validation pipes on the backend.
+All forms across the three apps use **React Hook Form v7** with the **Zod resolver** for validation. Zod schemas are imported from `packages/shared/` for frontend validation. The backend validates independently using NestJS class-validator + DTOs.
 
 ### Schema Sharing
 
 ```
-packages/shared/src/schemas/member.ts
+web/packages/shared/src/schemas/member.ts
   ↓ imported by
-packages/api-client/src/hooks/members.ts (useCreateMember mutation)
+web/packages/api-client/src/hooks/members.ts (useCreateMember mutation)
   ↓ and
-apps/admin/src/routes/_auth/members/new.tsx (form validation)
-  ↓ and
-server/src/members/dto/create-member.dto.ts (NestJS validation pipe)
+web/app/src/routes/_auth/members/new.tsx (form validation)
+
+Note: Backend validates independently via NestJS class-validator + DTOs in api/src/member/dto/.
+Frontend Zod schemas and backend DTOs define the same rules but are NOT shared across api/ and web/.
 ```
 
-This ensures that client-side validation rules always match server-side validation. If a schema changes, both sides update from the same source.
+This ensures that client-side and server-side validation rules stay consistent by convention, though they are maintained independently.
 
 ### FormField Component
 

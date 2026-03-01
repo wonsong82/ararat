@@ -9,9 +9,9 @@
 
 ### 0.1 Project Scaffolding & Infrastructure
 
-- [ ] **Monorepo setup** — `docs/trd/01-system-architecture.md` — Initialize project structure, package manager, workspace config, linter, formatter, TypeScript config
+- [ ] **Monorepo setup** — `docs/trd/01-system-architecture.md` — Initialize project root structure (`api/`, `web/`, `kiosk/`, `docs/`), root-level config (docker-compose.yml, Makefile, .env.example, AGENTS.md), backend `api/` scaffolding (package.json, tsconfig.json, NestJS boilerplate)
 - [ ] **Docker Compose environment** — `docs/trd/22-infrastructure.md` — PostgreSQL, Redis, LocalStack (S3) containers, Makefile with `make up`, `make down`, `make logs`, `.env.example`
-- [ ] **CI/CD pipeline skeleton** — `docs/trd/22-infrastructure.md` — GitHub Actions for lint, type-check, test on every push; Docker image build on merge to main
+- [ ] **CI/CD pipeline skeleton** — `docs/trd/22-infrastructure.md` — Per-app GitHub Actions workflows (api.yml, web-app.yml, web-admin.yml, web-monitor.yml, kiosk.yml) with path-based triggers, lint, type-check, test on every push; Docker image build for `api/` on merge to main
 - [ ] **Message queue setup (SQS)** — `docs/trd/22-infrastructure.md` — SQS queue configuration, dead-letter queues, retry logic with exponential backoff, async dispatch for notifications and batch jobs
 - [ ] **Monitoring & alerting infrastructure** — `docs/trd/22-infrastructure.md` — CloudWatch metrics (API response time, error rate, DB latency, cache hit rate, queue depth), alert rules, real-time system health dashboard
 - [ ] **Staging environment configuration** — `docs/trd/22-infrastructure.md` — Staging environment with anonymized production data copy, auto-deploy on commit, smoke tests, blue-green deployment config

@@ -18,14 +18,72 @@
 
 ### Containerization
 
-- **Docker**: All services containerized.
+- **Docker**: Backend API containerized (`api/Dockerfile`). Web apps are static builds deployed to S3 — not containerized. Kiosk is a native iOS app.
 - **Amazon ECS Fargate**: Container orchestration and auto-scaling. Migration to EKS when operational complexity warrants (500+ gyms, multi-region).
 - **Amazon ECR**: Container image registry.
+
+### Deployment Strategy
+
+Each application deploys independently. A change to the Admin App does not require redeploying the backend API or any other app.
+
+#### Per-App Deployment
+
+| Application | Source | Build | Target | URL Pattern |
+|-------------|--------|-------|--------|-------------|
+| Backend API | `api/` | `docker build` → ECR image | ECS Fargate (containerized) | `api.ararat.app` |
+| Parent App | `web/app/` | `pnpm --filter app build` → static files | S3 + CloudFront (SPA) | `app.ararat.app` |
+| Admin App | `web/admin/` | `pnpm --filter admin build` → static files | S3 + CloudFront (SPA) | `admin.ararat.app` |
+| Monitor App | `web/monitor/` | `pnpm --filter monitor build` → static files | S3 + CloudFront (SPA) | `monitor.ararat.app` |
+| Kiosk App | `kiosk/` | Xcode build → IPA | TestFlight → App Store | N/A (native app) |
+
+#### Backend API Deployment
+
+- **Build**: Docker multi-stage build from `api/Dockerfile`
+- **Registry**: Amazon ECR (private repository)
+- **Orchestration**: ECS Fargate with auto-scaling
+- **Strategy**: Blue-green deployment (zero downtime)
+- **Health check**: `/api/v1/health` endpoint
+- **Rollback**: Automatic if error rate spikes post-deploy
+
+#### Web App Deployment (Parent, Admin, Monitor)
+
+All three web apps follow the same deployment pattern:
+
+- **Build**: Vite production build (`pnpm build` in each app directory within `web/`)
+- **Output**: Static HTML/CSS/JS bundle in `dist/`
+- **Upload**: Sync `dist/` to app-specific S3 bucket
+- **CDN**: CloudFront distribution per app (separate distributions for separate domains)
+- **Cache invalidation**: CloudFront invalidation on deploy (`/*`)
+- **SPA routing**: S3 configured to redirect all 404s to `index.html` for client-side routing
+- **Environment variables**: Baked into the build via `VITE_*` env vars (API base URL, tenant config)
+
+#### Kiosk App Deployment
+
+- **Build**: Xcode archive → IPA
+- **Distribution**: Apple TestFlight (beta) → App Store (production)
+- **Updates**: Standard iOS app update mechanism
+- **MDM**: Optional enterprise MDM for managed deployment to gym iPads
+- **Version management**: Backend tracks `app_version` via kiosk heartbeat; can enforce minimum version
+
+#### CI/CD Per-App Triggers
+
+Each app has its own CI/CD workflow triggered by changes to its directory:
+
+| Workflow | Trigger Path | Actions |
+|----------|-------------|---------|
+| `api.yml` | `api/**` | Lint → Test → Build Docker → Push ECR → Deploy staging |
+| `web-app.yml` | `web/app/**`, `web/packages/**` | Lint → Test → Vite build → Deploy to S3/CloudFront |
+| `web-admin.yml` | `web/admin/**`, `web/packages/**` | Lint → Test → Vite build → Deploy to S3/CloudFront |
+| `web-monitor.yml` | `web/monitor/**`, `web/packages/**` | Lint → Test → Vite build → Deploy to S3/CloudFront |
+| `kiosk.yml` | `kiosk/**` | Build → Test → Archive (manual App Store upload) |
+
+**Note**: Web app workflows also trigger on `web/packages/**` changes because shared packages (`ui`, `api-client`, `shared`) affect all three web apps.
 
 ### CI/CD Pipeline
 
 1. **Source Control**: GitHub.
 2. **CI/CD**: GitHub Actions ([ADR-014](./adr/014-github-actions-cicd.md)).
+   > Each app has its own GitHub Actions workflow file, triggered only by changes to that app's directory (see Deployment Strategy above for trigger paths).
 3. **Automated Testing**: Unit tests, integration tests, E2E tests on every push.
 4. **Build**: Docker image built and pushed to Amazon ECR.
 5. **Staging Deployment**: Auto-deploy to staging environment.
