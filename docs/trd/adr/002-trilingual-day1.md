@@ -32,4 +32,4 @@ Support three languages from Day 1: English (default), Korean (ko-KR), and Spani
 - Cultural UX patterns differ (honorifics in Korean, formal "usted" in Spanish)
 - Date/time/currency formatting varies by locale
 
-**Affects**: [06-i18n](../06-i18n.md), [12-notifications](../12-notifications.md), [13-newsletter](../13-newsletter.md)
+**Affects**: [06-i18n](../06-i18n.md), [13-notifications](../13-notifications.md), [14-newsletter](../14-newsletter.md)

@@ -35,4 +35,4 @@ All face recognition processing happens on-device (iPad). Face embeddings are ge
 - Third-party SDK licensing cost (KBY-AI/FacePlugin)
 - Cannot centrally update ML models — must push to each device
 
-**Affects**: [09-kiosk-face-recognition](../09-kiosk-face-recognition.md), [07-registration](../07-registration.md), [19-security-compliance](../19-security-compliance.md)
+**Affects**: [08-kiosk-app-architecture](../08-kiosk-app-architecture.md), [09-registration](../09-registration.md), [20-security-compliance](../20-security-compliance.md)

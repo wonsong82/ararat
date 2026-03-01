@@ -30,4 +30,4 @@ Remove GPS-triggered notification feature. Not required. Adds complexity without
 - Parents only learn about attendance after check-in (not on approach)
 - No "pre-arrival" functionality
 
-**Affects**: [08-attendance](../08-attendance.md), [09-kiosk-face-recognition](../09-kiosk-face-recognition.md)
+**Affects**: [10-attendance](../10-attendance.md), [08-kiosk-app-architecture](../08-kiosk-app-architecture.md)

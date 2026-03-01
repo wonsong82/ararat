@@ -36,4 +36,4 @@ Use **Node.js + NestJS** (TypeScript) as the backend framework.
 - Steeper learning curve for developers unfamiliar with Angular-style patterns
 - Slightly larger bundle size due to decorator metadata
 
-**Affects**: [01-system-architecture](../01-system-architecture.md), [05-api-design](../05-api-design.md), [21-infrastructure](../21-infrastructure.md)
+**Affects**: [01-system-architecture](../01-system-architecture.md), [05-api-design](../05-api-design.md), [22-infrastructure](../22-infrastructure.md)

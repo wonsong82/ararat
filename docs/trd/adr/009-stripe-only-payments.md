@@ -34,4 +34,4 @@ Use Stripe as the sole payment processor. Single Stripe account with metadata-ba
 - Single Stripe account means platform handles payout distribution to gyms
 - No Korean payment methods (not needed for US market)
 
-**Affects**: [10-payments](../10-payments.md)
+**Affects**: [11-payments](../11-payments.md)

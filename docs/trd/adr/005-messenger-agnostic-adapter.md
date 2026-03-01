@@ -33,4 +33,4 @@ Implement messenger integration using an agnostic adapter pattern. Define a `Mes
 - Multiple messenger SDKs to maintain
 - Testing complexity increases with each adapter
 
-**Affects**: [12-notifications](../12-notifications.md)
+**Affects**: [13-notifications](../13-notifications.md)

@@ -6,20 +6,21 @@ This directory contains all architecture decisions made for the Ararat platform.
 
 | ADR | Decision | Status | Date | Affects |
 |-----|----------|--------|------|---------|
-| [001](./001-us-market-only.md) | US Market Only | Accepted | 2025-02-25 | 10-payments, 12-notifications, 06-i18n, 04-auth |
-| [002](./002-trilingual-day1.md) | Trilingual Support from Day 1 | Accepted | 2025-02-25 | 06-i18n, 12-notifications, 13-newsletter |
+| [001](./001-us-market-only.md) | US Market Only | Accepted | 2025-02-25 | 11-payments, 13-notifications, 06-i18n, 04-auth |
+| [002](./002-trilingual-day1.md) | Trilingual Support from Day 1 | Accepted | 2025-02-25 | 06-i18n, 13-notifications, 14-newsletter |
 | [003](./003-multi-tenant-architecture.md) | Multi-Tenant Single-Deployment | Accepted | 2025-02-25 | 01-system-architecture, 02-multi-tenancy, 03-data-model |
-| [004](./004-face-recognition-on-device.md) | Face Recognition On-Device Only | Accepted | 2025-02-25 | 09-kiosk-face-recognition, 07-registration, 19-security-compliance |
-| [005](./005-messenger-agnostic-adapter.md) | Messenger Agnostic Adapter Pattern | Accepted | 2025-02-25 | 12-notifications |
+| [004](./004-face-recognition-on-device.md) | Face Recognition On-Device Only | Accepted | 2025-02-25 | 08-kiosk-app-architecture, 09-registration, 20-security-compliance |
+| [005](./005-messenger-agnostic-adapter.md) | Messenger Agnostic Adapter Pattern | Accepted | 2025-02-25 | 13-notifications |
 | [006](./006-no-shuttle-van.md) | Shuttle Van Features Removed | Accepted | 2025-02-25 | Overall product scope |
-| [007](./007-no-gps-notifications.md) | GPS-Triggered Notifications Removed | Accepted | 2025-02-25 | 08-attendance, 09-kiosk-face-recognition |
+| [007](./007-no-gps-notifications.md) | GPS-Triggered Notifications Removed | Accepted | 2025-02-25 | 10-attendance, 08-kiosk-app-architecture |
 | [008](./008-api-first-restful-backend.md) | API-First RESTful Backend | Accepted | 2025-02-25 | 01-system-architecture, 05-api-design |
-| [009](./009-stripe-only-payments.md) | Stripe-Only Payments | Accepted | 2025-02-25 | 10-payments |
+| [009](./009-stripe-only-payments.md) | Stripe-Only Payments | Accepted | 2025-02-25 | 11-payments |
 | [010](./010-trd-living-document.md) | TRD as Living Document | Accepted | 2025-02-25 | All TRD sections, AGENTS.md |
-| [011](./011-nestjs-backend.md) | NestJS Backend Framework | Accepted | 2026-02-25 | 01-system-architecture, 05-api-design, 21-infrastructure |
-| [012](./012-react-vite-frontend.md) | React + Vite Frontend | Accepted | 2026-02-25 | 01-system-architecture, 17-monitor-app |
-| [013](./013-aws-cloud-platform.md) | AWS Cloud Platform | Accepted | 2026-02-25 | 01-system-architecture, 18-file-storage, 21-infrastructure |
-| [014](./014-github-actions-cicd.md) | GitHub Actions CI/CD | Accepted | 2026-02-25 | 21-infrastructure |
+| [011](./011-nestjs-backend.md) | NestJS Backend Framework | Accepted | 2026-02-25 | 01-system-architecture, 05-api-design, 22-infrastructure |
+| [012](./012-react-vite-frontend.md) | React + Vite Frontend | Accepted | 2026-02-25 | 01-system-architecture, 07-web-frontend-architecture, 18-monitor-app |
+| [013](./013-aws-cloud-platform.md) | AWS Cloud Platform | Accepted | 2026-02-25 | 01-system-architecture, 19-file-storage, 22-infrastructure |
+| [014](./014-github-actions-cicd.md) | GitHub Actions CI/CD | Accepted | 2026-02-25 | 22-infrastructure |
+| [015](./015-frontend-library-stack.md) | Frontend Library Stack | Accepted | 2026-02-26 | 01-system-architecture, 07-web-frontend-architecture |
 
 ## When to Create a New ADR
 

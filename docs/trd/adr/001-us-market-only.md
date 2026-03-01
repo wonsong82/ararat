@@ -31,4 +31,4 @@ Target the US market exclusively. All payments via Stripe (USD), SMS via Twilio 
 - May miss Korean gym owners who want Korea-compatible features
 - Stripe fees (2.9% + $0.30) may be higher than Korean alternatives
 
-**Affects**: [10-payments](../10-payments.md), [12-notifications](../12-notifications.md), [06-i18n](../06-i18n.md), [04-auth](../04-auth.md)
+**Affects**: [11-payments](../11-payments.md), [13-notifications](../13-notifications.md), [06-i18n](../06-i18n.md), [04-auth](../04-auth.md)

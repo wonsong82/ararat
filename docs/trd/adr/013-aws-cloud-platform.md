@@ -40,4 +40,4 @@ Use **AWS** as the cloud platform with the following services:
 - ECS Fargate is AWS-specific (vendor lock-in for orchestration layer — mitigated by Docker containers being portable)
 - Higher operational complexity than GCP Cloud Run for initial setup
 
-**Affects**: [01-system-architecture](../01-system-architecture.md), [18-file-storage](../18-file-storage.md), [21-infrastructure](../21-infrastructure.md)
+**Affects**: [01-system-architecture](../01-system-architecture.md), [19-file-storage](../19-file-storage.md), [22-infrastructure](../22-infrastructure.md)

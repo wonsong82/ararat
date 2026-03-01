@@ -29,4 +29,4 @@ Use **GitHub Actions** for CI/CD, with source control on **GitHub**.
 - Less powerful than GitLab CI for complex pipeline DAGs (not needed for this project)
 - Limited built-in container registry (use AWS ECR instead)
 
-**Affects**: [21-infrastructure](../21-infrastructure.md)
+**Affects**: [22-infrastructure](../22-infrastructure.md)

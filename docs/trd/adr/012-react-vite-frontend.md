@@ -30,4 +30,4 @@ Use **React + Vite** (TypeScript) for all web-based client applications.
 - No SSR — not suitable if SEO becomes important later (unlikely for authenticated apps)
 - Three separate SPA builds to maintain (Parent, Admin, Monitor) — mitigated by shared component library
 
-**Affects**: [01-system-architecture](../01-system-architecture.md), [17-monitor-app](../17-monitor-app.md)
+**Affects**: [01-system-architecture](../01-system-architecture.md), [07-web-frontend-architecture](../07-web-frontend-architecture.md), [18-monitor-app](../18-monitor-app.md)

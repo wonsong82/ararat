@@ -1,7 +1,7 @@
 # Technical Requirements Document: Ararat
 
-**Version**: 2.0  
-**Last Updated**: February 25, 2026  
+**Version**: 3.0  
+**Last Updated**: March 1, 2026  
 **Status**: Draft
 
 ---
@@ -21,29 +21,47 @@ The TRD is the **single source of truth** for implementation. During development
 
 ## Section Map
 
+### Part 1 — Foundation (01–06)
+
 | # | File | Covers | Key Entities | Depends On | Phase |
 |---|------|--------|-------------|------------|-------|
-| 1 | [System Architecture](./01-system-architecture.md) | High-level architecture diagram, service boundaries, tech stack | All services | — | MVP |
+| 1 | [System Architecture](./01-system-architecture.md) | High-level architecture, service boundaries, tech stack, all-app overview | All services | — | MVP |
 | 2 | [Multi-Tenancy](./02-multi-tenancy.md) | Data isolation, tenant context propagation, per-gym settings | Tenant, SystemSetting | 01, 03, 04 | MVP |
 | 3 | [Data Model](./03-data-model.md) | ER diagram, all entity definitions with field specs | 30+ entities (Member, Parent, Attendance, Payment, etc.) | 01, 02 | MVP |
-| 4 | [Authentication](./04-auth.md) | Parent OTP flow, admin 2FA, JWT tokens, RBAC matrix | User, UserSession | 02, 03, 05 | MVP |
+| 4 | [Authentication](./04-auth.md) | Parent OTP, admin 2FA, JWT tokens, RBAC, frontend auth flows | User, UserSession | 02, 03, 05 | MVP |
 | 5 | [API Design](./05-api-design.md) | REST conventions, response envelope, pagination, error codes, rate limiting, webhooks | — | 04 | MVP |
-| 6 | [Internationalization](./06-i18n.md) | Trilingual support (EN/KO/ES), locale files, cultural UX patterns | NotificationTemplate | 12, 13 | MVP |
-| 7 | [Registration](./07-registration.md) | Parent/self/admin registration, duplicate detection, COPPA consent, profiles, withdrawal | Member, Parent, ParentChild | 03, 04, 09, 10, 19 | MVP |
-| 8 | [Attendance](./08-attendance.md) | Check-in methods, dual-check flow, audit trail, absence alerts | Attendance, AttendanceAudit, AlertRule | 03, 09, 12 | MVP |
-| 9 | [Kiosk & Face Recognition](./09-kiosk-face-recognition.md) | On-device face recognition, enrollment, offline mode, re-enrollment, multi-kiosk sync | Kiosk, face embeddings (local) | 07, 08, 19 | Phase 2 |
-| 10 | [Payments](./10-payments.md) | Stripe integration, recurring billing, grace period, family billing, refunds, invoices | Payment, Invoice, Membership, MembershipPlan | 02, 03, 07, 11 | MVP |
-| 11 | [심사 Belt Promotion](./11-simsa.md) | Exam scheduling, eligibility, registration, result entry, certificates | Simsa, SimsaRegistration, SimsaResult | 03, 10, 12 | MVP |
-| 12 | [Notifications](./12-notifications.md) | Multi-channel routing, dispatch flow, alert rules engine, messenger adapter pattern | Notification, NotificationTemplate, AlertRule | 06, 08, 10, 11 | MVP |
-| 13 | [Newsletter](./13-newsletter.md) | 가정통신문 editor, audience targeting, delivery, read receipts | Newsletter, NewsletterRecipient | 06, 12, 18 | Phase 2 |
-| 14 | [Parent Feed](./14-parent-feed.md) | Training notes, photo sharing, observations, weekly summaries, milestones | ActivityFeedPost, ActivityFeedPhoto, ActivityFeedReaction | 08, 12, 18 | Phase 2 |
-| 15 | [Reporting](./15-reporting.md) | Attendance, financial, roster, retention, 심사 reports; dashboard visualizations | — (reads from all entities) | 03, 08, 10, 11 | MVP / Phase 2 |
-| 16 | [Admin Tools](./16-admin-tools.md) | Audit log, task system, announcements, gym settings management | AuditLog, Task | 04, 12, 15 | MVP |
-| 17 | [Monitor App](./17-monitor-app.md) | TV display: schedule, live attendance, announcements | — (read-only) | 08 | Phase 2 |
-| 18 | [File Storage](./18-file-storage.md) | S3 storage, CDN, presigned uploads, retention policies | Files in S3 | 07, 13, 14 | MVP |
-| 19 | [Security & Compliance](./19-security-compliance.md) | COPPA, BIPA, encryption, audit trail, data deletion workflow | Consent records, AuditLog | 07, 09 | MVP |
-| 20 | [Performance](./20-performance.md) | Response time targets, uptime SLA, scale targets | — | All | All |
-| 21 | [Infrastructure](./21-infrastructure.md) | Cloud platform, CI/CD, database, caching, queue, monitoring, backup, scaling | — | All | MVP |
+| 6 | [Internationalization](./06-i18n.md) | Trilingual (EN/KO/ES), server templates, client-side i18n, cultural UX | NotificationTemplate | — | MVP |
+
+### Part 2 — App Architecture (07–08)
+
+| # | File | Covers | Key Entities | Depends On | Phase |
+|---|------|--------|-------------|------------|-------|
+| 7 | [Web Frontend Architecture](./07-web-frontend-architecture.md) | Monorepo structure, shared packages, routing, auth flow, state management, forms, responsive design | Parent App, Admin App, Monitor App | 01, 04, 05, 06 | MVP / Phase 2 |
+| 8 | [Kiosk App Architecture](./08-kiosk-app-architecture.md) | Native iOS Swift, MVVM+SwiftUI, face recognition pipeline, local storage, offline mode | Kiosk, face embeddings (local) | 01, 04, 10 | Phase 2 |
+
+### Part 3 — Features (09–18)
+
+| # | File | Covers | Key Entities | Depends On | Phase |
+|---|------|--------|-------------|------------|-------|
+| 9 | [Registration](./09-registration.md) | Registration flows, duplicate detection, COPPA consent, profiles, withdrawal — all-app UX | Member, Parent, ParentChild | 03, 04, 08, 11, 20 | MVP |
+| 10 | [Attendance](./10-attendance.md) | Check-in methods, dual-check flow, audit trail, absence alerts, kiosk UX — all-app UX | Attendance, AttendanceAudit, AlertRule | 03, 08, 13 | MVP |
+| 11 | [Payments](./11-payments.md) | Stripe integration, recurring billing, grace period, family billing, refunds — all-app UX | Payment, Invoice, Membership, MembershipPlan | 02, 03, 09, 12 | MVP |
+| 12 | [심사 Belt Promotion](./12-simsa.md) | Exam scheduling, eligibility, registration, result entry, certificates — all-app UX | Simsa, SimsaRegistration, SimsaResult | 03, 11, 13 | MVP |
+| 13 | [Notifications](./13-notifications.md) | Multi-channel routing, dispatch flow, alert rules, messenger adapter — all-app UX | Notification, NotificationTemplate, AlertRule | 06, 10, 11, 12 | MVP |
+| 14 | [Newsletter](./14-newsletter.md) | 가정통신문 editor, audience targeting, delivery, read receipts — all-app UX | Newsletter, NewsletterRecipient | 06, 13, 19 | Phase 2 |
+| 15 | [Parent Feed](./15-parent-feed.md) | Training notes, photo sharing, observations, weekly summaries, milestones — all-app UX | ActivityFeedPost, ActivityFeedPhoto, ActivityFeedReaction | 10, 13, 19 | Phase 2 |
+| 16 | [Reporting](./16-reporting.md) | Attendance, financial, roster, retention, 심사 reports, dashboard — admin UX | — (reads from all entities) | 03, 10, 11, 12 | MVP / Phase 2 |
+| 17 | [Admin Tools](./17-admin-tools.md) | Audit log, task system, gym settings, staff management, class management — admin UX | AuditLog, Task | 04, 13, 16 | MVP |
+| 18 | [Monitor App](./18-monitor-app.md) | TV display: schedule, live attendance, announcements, setup/pairing — display UX | — (read-only) | 10 | Phase 2 |
+
+### Part 4 — Infrastructure (19–22)
+
+| # | File | Covers | Key Entities | Depends On | Phase |
+|---|------|--------|-------------|------------|-------|
+| 19 | [File Storage](./19-file-storage.md) | S3 storage, CDN, presigned uploads, retention policies | Files in S3 | 09, 14, 15 | MVP |
+| 20 | [Security & Compliance](./20-security-compliance.md) | COPPA, BIPA, encryption, audit trail, data deletion workflow | Consent records, AuditLog | 08, 09 | MVP |
+| 21 | [Performance](./21-performance.md) | Response time targets, uptime SLA, scale targets | — | All | All |
+| 22 | [Infrastructure](./22-infrastructure.md) | Cloud platform, CI/CD, database, caching, queue, monitoring, backup, scaling | — | All | MVP |
 
 ---
 
@@ -53,20 +71,21 @@ Architectural decisions are documented in [`adr/`](./adr/). See the [ADR Index](
 
 | ADR | Decision | Affects |
 |-----|----------|---------|
-| [001](./adr/001-us-market-only.md) | US Market Only | 04, 06, 10, 12 |
-| [002](./adr/002-trilingual-day1.md) | Trilingual from Day 1 | 06, 12, 13 |
+| [001](./adr/001-us-market-only.md) | US Market Only | 04, 06, 11, 13 |
+| [002](./adr/002-trilingual-day1.md) | Trilingual from Day 1 | 06, 13, 14 |
 | [003](./adr/003-multi-tenant-architecture.md) | Multi-Tenant Single-Deployment | 01, 02, 03 |
-| [004](./adr/004-face-recognition-on-device.md) | Face Recognition On-Device Only | 07, 09, 19 |
-| [005](./adr/005-messenger-agnostic-adapter.md) | Messenger Agnostic Adapter | 12 |
+| [004](./adr/004-face-recognition-on-device.md) | Face Recognition On-Device Only | 08, 09, 20 |
+| [005](./adr/005-messenger-agnostic-adapter.md) | Messenger Agnostic Adapter | 13 |
 | [006](./adr/006-no-shuttle-van.md) | Shuttle Van Removed | Scope |
-| [007](./adr/007-no-gps-notifications.md) | GPS Notifications Removed | 08, 09 |
+| [007](./adr/007-no-gps-notifications.md) | GPS Notifications Removed | 08, 10 |
 | [008](./adr/008-api-first-restful-backend.md) | API-First RESTful Backend | 01, 05 |
-| [009](./adr/009-stripe-only-payments.md) | Stripe-Only Payments | 10 |
+| [009](./adr/009-stripe-only-payments.md) | Stripe-Only Payments | 11 |
 | [010](./adr/010-trd-living-document.md) | TRD as Living Document | All |
-| [011](./adr/011-nestjs-backend.md) | NestJS Backend Framework | 01, 05, 21 |
-| [012](./adr/012-react-vite-frontend.md) | React + Vite Frontend | 01, 17 |
-| [013](./adr/013-aws-cloud-platform.md) | AWS Cloud Platform | 01, 18, 21 |
-| [014](./adr/014-github-actions-cicd.md) | GitHub Actions CI/CD | 21 |
+| [011](./adr/011-nestjs-backend.md) | NestJS Backend Framework | 01, 05, 22 |
+| [012](./adr/012-react-vite-frontend.md) | React + Vite Frontend | 01, 07, 18 |
+| [013](./adr/013-aws-cloud-platform.md) | AWS Cloud Platform | 01, 19, 22 |
+| [014](./adr/014-github-actions-cicd.md) | GitHub Actions CI/CD | 22 |
+| [015](./adr/015-frontend-library-stack.md) | Frontend Library Stack | 01, 07 |
 
 ---
 
