@@ -1,6 +1,6 @@
-# 18. File & Media Storage
+# 19. File & Media Storage
 
-**Related TRDs**: [07-registration](./07-registration.md), [13-newsletter](./13-newsletter.md), [14-parent-feed](./14-parent-feed.md)  
+**Related TRDs**: [09-registration](./09-registration.md), [14-newsletter](./14-newsletter.md), [15-parent-feed](./15-parent-feed.md)  
 **Related ADRs**: _None_  
 **Phase**: MVP (Phase 1)
 

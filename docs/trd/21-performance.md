@@ -1,4 +1,4 @@
-# 20. Performance Requirements
+# 21. Performance Requirements
 
 **Related TRDs**: All sections  
 **Related ADRs**: _None_  

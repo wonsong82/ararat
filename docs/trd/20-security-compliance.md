@@ -1,6 +1,6 @@
-# 19. Security & Compliance Implementation
+# 20. Security & Compliance Implementation
 
-**Related TRDs**: [07-registration](./07-registration.md), [09-kiosk-face-recognition](./09-kiosk-face-recognition.md)  
+**Related TRDs**: [09-registration](./09-registration.md), [08-kiosk-app-architecture](./08-kiosk-app-architecture.md)  
 **Related ADRs**: [ADR-004](./adr/004-face-recognition-on-device.md), [ADR-007](./adr/007-no-gps-notifications.md)  
 **Phase**: MVP (Phase 1)
 

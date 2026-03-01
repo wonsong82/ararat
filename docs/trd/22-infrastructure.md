@@ -1,4 +1,4 @@
-# 21. Infrastructure & Deployment
+# 22. Infrastructure & Deployment
 
 **Related TRDs**: All sections  
 **Related ADRs**: [ADR-011](./adr/011-nestjs-backend.md), [ADR-013](./adr/013-aws-cloud-platform.md), [ADR-014](./adr/014-github-actions-cicd.md)  
