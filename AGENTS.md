@@ -63,7 +63,7 @@
 | Document | Purpose | Contains | Does NOT contain |
 |----------|---------|----------|------------------|
 | **PRD.md** | High-level product description & requirements | Business goals, user stories, feature scope, acceptance criteria | Technical implementation details |
-| **TRD** | Technical details & implementation design — **living document** | `docs/trd/` directory with 21 section files, each with Implementation Notes. Index at `docs/trd/README.md`. ADRs in `docs/trd/adr/`. | Raw code dumps, implementation tracking/checklists |
+| **TRD** | Technical details & implementation design — **living document** | `docs/trd/` directory with 22 section files (4-part structure: Foundation, App Architecture, Features, Infrastructure), each with Implementation Notes. Index at `docs/trd/README.md`. ADRs in `docs/trd/adr/`. | Raw code dumps, implementation tracking/checklists |
 | **IMP** | Implementation plan & progress tracking — **split by phase** | `docs/imp/` directory with phase files. Index at `docs/imp/README.md`. | Product requirements, technical specs |
 | **README.md** | End-user & developer usage guide | Setup, usage, configuration, API reference | Internal planning or tracking |
 
@@ -178,13 +178,69 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 
 The TRD is the **single source of truth** for implementation. During development, developers reference ONLY the TRD — never the PRD.
 
+#### Content Completeness
+
 - **EVERY** business rule, flow, state machine, data model, and configurable behavior from the PRD must be captured as a technical specification in the TRD
 - **EVERY** feature section in the TRD must contain enough detail to implement without cross-referencing any other document
 - **NEVER** leave a requirement in PRD that is not reflected in TRD — if the PRD changes, update TRD first
 - **ALWAYS** include: data model, validation rules, state transitions, error handling, edge cases, and configuration options for each feature
 - If the TRD is missing information needed to implement a feature, **update the TRD first** before writing code
+
+#### All-Layers Coverage (CRITICAL — prevents backend-only blindspot)
+
+The TRD must specify **every application and layer** listed in the PRD — not just the backend API.
+
+- **EVERY application** defined in the PRD (web apps, native apps, display apps, etc.) must have its own architectural spec in the TRD — folder structure, tech choices, screen inventory, and patterns
+- **Backend API** is not the product — it is ONE layer. The TRD must also fully specify: frontend architecture, frontend screens/flows, native app architecture, and any other client applications
+- **Each feature TRD** must describe BOTH the backend implementation AND the frontend/client experience — API endpoints alone are not a complete spec
+- **Frontend architecture** requires the same rigor as backend: folder structure, routing strategy, state management pattern, API client pattern, auth flow (token storage, refresh, protected routes), component patterns, styling approach, form handling, error handling
+- **Native apps** (iOS, Android) require: architecture pattern (MVC/MVVM/SwiftUI), local storage strategy, sync protocol, offline behavior, platform-specific APIs used
+- **Cross-cutting frontend concerns** must be specified: shared component library (if multiple web apps), design tokens, responsive breakpoints, accessibility standards, i18n integration on the client side
+### IMP Completeness Rule (CRITICAL)
+
+The IMP is the **complete task breakdown** of the TRD. It must achieve perfect 1:1 coverage — every TRD spec has a corresponding task, and every task traces back to a TRD spec.
+
+#### Coverage Requirements
+
+- **EVERY** feature, flow, state machine, cron job, webhook handler, API endpoint, business rule, and integration described in the TRD must have a corresponding IMP task
+- **EVERY** IMP task must reference the TRD section it implements (e.g., `docs/trd/07-registration.md`)
+- **NO net-new tasks** — if an IMP task describes something not specified in the TRD, either add the spec to the TRD first or remove the task. IMP implements TRD, it does not extend it.
+- **Subtle specs count**: Cron jobs, scheduled tasks, seed data, admin CRUD for config entities, auto-generated content (certificates, summaries), deadline reminders, retention policies, and dashboard views are all tasks — not implied by other tasks
+- **Cross-reference verification**: Before finalizing IMP, perform a section-by-section cross-reference of every TRD file against IMP tasks. Flag any TRD content without a corresponding task.
+
+#### All-Layers Task Coverage (CRITICAL — prevents backend-only IMP)
+
+- **EVERY application** in the PRD must have IMP tasks — backend API tasks alone do NOT constitute a complete IMP
+- For each feature, the IMP must include SEPARATE tasks for: backend API/service, frontend screens/components, and any native app work
+- A task like "member registration" is INCOMPLETE — it must be split into: "member registration API" + "member registration frontend screens" (or equivalent granularity)
+- **Frontend scaffolding** (app setup, routing, shared components, auth flow, API client) must have its own IMP tasks in Phase 0 alongside backend scaffolding
+- **Verification**: Before finalizing IMP, count tasks per application. If any PRD-listed application has zero or near-zero tasks, the IMP is incomplete
+
+#### Phase Splitting
+
+- Phases are split based on **dependency order** (Phase N+1 depends on Phase N) and **task volume**
+- **Target**: 15–25 tasks per phase. If a phase exceeds 25 tasks, split it into sub-phases (e.g., Phase 1a, Phase 1b) or reorganize into more granular phases
+- **Phase 0** is always foundation/infrastructure — no feature logic, just scaffolding
+- **Each phase must be independently deliverable** — completing a phase should produce a working (if incomplete) system
+- When splitting, respect dependency chains — never put a dependent task in an earlier phase than its prerequisite
+
+#### Task Granularity
+
+- Each task should be completable in **1–3 focused work sessions** (roughly 1–4 hours each)
+- Tasks that are too broad ("Build the entire payment system") must be broken into atomic subtasks
+- Tasks that are too narrow ("Add a single field to a table") should be merged with related tasks
+- A good task has a **clear done condition**: "X endpoint returns Y", "cron job runs daily and triggers Z", "admin can CRUD W"
 - The PRD defines **what and why**. The TRD defines **how** — completely.
+
+#### Technical Decisions (Must Be Finalized Before IMP)
+
 - **EVERY** technology choice must be finalized in the TRD with a corresponding ADR — no open options ("X or Y") are allowed. The IMP cannot be created until all technical decisions are locked.
+- **Folder structure**: The TRD must define the project's directory layout — monorepo structure, app directories, shared packages, config file locations. Developers must know where to put new files without guessing.
+- **Architecture patterns**: The TRD must specify architectural patterns used — module boundaries, dependency injection, service layer patterns, repository patterns, middleware chains, error handling strategy. Not just "use NestJS" but HOW to use it.
+- **Coding conventions**: The TRD must capture coding standards — naming conventions (files, classes, functions, variables), import ordering, module export style, DTO/entity patterns, response formatting. These go in a dedicated TRD section or in the system architecture section.
+- **Detailed tech stack**: Beyond framework names, the TRD must specify key libraries and their roles — ORM (e.g., TypeORM vs Prisma vs Drizzle), validation library, logging library, testing framework, migration tool, API documentation tool. Each choice requires an ADR if alternatives exist.
+- **API conventions**: Request/response shapes, authentication flow, error format, pagination strategy, versioning approach — all must be specified with concrete examples, not just described abstractly.
+- **Frontend libraries**: UI component library, state management, form handling, styling system, charting/visualization, date/time handling — each requires an ADR if alternatives exist. "Use React" is not enough — specify HOW React is used.
 
 ### TRD as Living Document (CRITICAL)
 
@@ -516,5 +572,5 @@ AGENTS.md is a **living document** that evolves alongside the project. The agent
 - During implementation, reference `docs/trd/` only — never go back to PRD.md for technical details
 - Use Mermaid for any diagrams (sequence, ER, flowchart)
 - The plan-confirm step is non-negotiable — no exceptions, even for "quick" changes
-- This project is currently in **IMP phase** — `docs/imp/` is being created
+- This project is currently in **IMP phase** — TRDs (v3.0) are complete with end-to-end coverage across all 5 apps (Backend, Parent App, Admin App, Kiosk App, Monitor App). IMPs cover 135 tasks across 7 phases. Ready for implementation after final review.
 - One AGENTS.md at the project root is sufficient for most projects. For monorepos with truly independent apps (separate tech stacks, conventions, deployments), create an additional AGENTS.md in each app directory with app-specific overrides — the root AGENTS.md still holds shared rules
