@@ -629,6 +629,45 @@ Dashboard widget showing members who have exceeded absence thresholds:
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Notification Service | Internal (TRD 13) | Dispatch check-in confirmations, absence alerts | Internal call | `{ recipientId, templateId, data }` | `{ notificationId }` |
+| Member Service | Internal (TRD 09) | Validate member exists and is active | Internal call | `{ memberId }` | `{ member }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/attendance/check-in` | POST | Kiosk App, Admin App | `{ memberId, method, classId }` | Check-in confirmation |
+| `/api/v1/tenants/{tenantId}/attendance` | GET | Admin App, Parent App | `?date=&classId=&memberId=` | Attendance records |
+| `/api/v1/tenants/{tenantId}/attendance/{id}/confirm` | POST | Admin App | `{ confirmed }` | Confirmation status |
+| `/api/v1/tenants/{tenantId}/attendance/audit` | GET | Admin App | `?date=&memberId=` | Audit trail entries |
+| `/api/v1/tenants/{tenantId}/alert-rules` | GET/POST/PATCH | Admin App | Alert rule config JSON | Alert rule list or detail |
+
+---
+
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Group Check-In
+- **Use case**: Instructor checks in multiple students at once (e.g., entire class arrival)
+- **Admin App UX**: Class roster view with multi-select checkboxes, "Check in all" button
+- **Audit trail**: Group check-ins recorded with `method: 'group'` and `performed_by` instructor ID
+- **Validation**: Cannot group-check-in students not enrolled in the class
+
+### NFC Check-In
+- **Use case**: Students tap NFC-enabled ID card on a reader device for attendance
+- **Hardware**: Compatible NFC reader connected to Kiosk iPad or standalone reader
+- **Flow**: NFC tag read → match to member record → check-in recorded with `method: 'nfc'`
+- **Kiosk integration**: Extends existing Kiosk check-in flow (alongside face recognition and PIN)
+- **Fallback**: If NFC read fails, student can use PIN or face recognition
+
+---
+
 ## Implementation Notes
 
 > _This section will be updated as the feature is implemented._

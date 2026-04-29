@@ -337,6 +337,53 @@ Tabbed interface for managing all aspects of the notification system.
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Twilio | External | `POST /2010-04-01/Accounts/{sid}/Messages.json` | POST | `{ To, From, Body }` | `{ sid, status }` |
+| Firebase Cloud Messaging | External | `POST /v1/projects/{id}/messages:send` | POST | `{ message: { token, notification } }` | `{ name }` |
+| SendGrid | External | `POST /v3/mail/send` | POST | `{ personalizations, from, subject, content }` | `202 Accepted` |
+| KakaoTalk API | External | Messenger-specific adapter endpoint | POST | Adapter-defined payload | Delivery status |
+| AWS SQS | Infrastructure | Async notification queue | SendMessage | `{ type, recipientId, templateId, data }` | `{ messageId }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/notifications` | GET | Admin App, Parent App | `?type=&read=&cursor=&limit=` | Notification list |
+| `/api/v1/tenants/{tenantId}/notifications/{id}/read` | PATCH | Parent App | — | `204 No Content` |
+| `/api/v1/tenants/{tenantId}/notifications/templates` | GET/POST/PATCH | Admin App | Template data JSON | Template list or detail |
+| `/api/v1/tenants/{tenantId}/notifications/broadcast` | POST | Admin App | `{ templateId, audience, channels }` | Broadcast confirmation |
+| `/api/v1/tenants/{tenantId}/alert-rules` | GET/POST/PATCH | Admin App | Alert rule config JSON | Alert rule list or detail |
+| Internal: dispatch() | Internal call | All feature services (TRDs 09–18) | `{ recipientId, type, templateId, data }` | `{ notificationId }` |
+
+
+---
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Notification Analytics & Open Rates
+- **Use case**: Track delivery and engagement metrics for notifications across all channels
+- **Metrics tracked**: Sent count, delivered count, opened/read count, click-through count (for links), bounce/failure count
+- **Channel breakdown**: Per-channel analytics (push, SMS, email, messenger)
+- **Admin dashboard**: Analytics widget showing notification performance trends (daily/weekly/monthly)
+- **Template performance**: Compare effectiveness across notification templates
+
+### Email Attachment Support
+- **Use case**: Attach files (PDFs, images) to email notifications (e.g., 심사 certificates, invoices)
+- **Attachment source**: Files from S3 storage (TRD 19) attached via SES API
+- **Size limits**: Max 10 MB per email (SES limit), max 3 attachments per email
+- **Templates**: Email templates specify which data-generated files to attach (e.g., `{{certificate_pdf}}`)
+
+### Alert Effectiveness Report
+- **Use case**: Measure whether automated alerts (absence, payment overdue, etc.) drive desired actions
+- **Metrics**: Alert sent → action taken rate (e.g., absence alert sent → parent acknowledged within 24h)
+- **Admin view**: Report in Admin App showing alert type effectiveness rankings
+- **Optimization**: Suggest best channel per alert type based on historical response rates
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

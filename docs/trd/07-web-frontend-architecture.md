@@ -1,7 +1,7 @@
 # 7. Web Frontend Architecture
 
 **Related TRDs**: [01-system-architecture](./01-system-architecture.md), [04-auth](./04-auth.md), [05-api-design](./05-api-design.md), [06-i18n](./06-i18n.md)  
-**Related ADRs**: [ADR-012](./adr/012-react-vite-frontend.md), [ADR-015](./adr/015-frontend-library-stack.md)  
+**Related ADRs**: [ADR-012](./adr/012-react-vite-frontend.md), [ADR-015](./adr/015-frontend-library-stack.md), [ADR-017](./adr/017-frontend-testing-vitest.md), [ADR-018](./adr/018-e2e-testing-playwright.md)  
 **Phase**: MVP (Phase 1)
 
 ---
@@ -690,6 +690,42 @@ The Parent App and Admin App detect offline status using `navigator.onLine` and 
 The Monitor App handles offline differently — see [18-monitor-app](./18-monitor-app.md) Auto-Recovery section.
 
 ---
+
+## 9a. Testing Strategy
+
+### Unit & Component Testing — Vitest ([ADR-017](./adr/017-frontend-testing-vitest.md))
+
+- **Framework**: Vitest with `@testing-library/react` for component tests
+- **Configuration**: `vitest.config.ts` in each app and shared package, extending root Vite config
+- **DOM environment**: `jsdom` via Vitest config
+- **Test file convention**: Co-located `*.test.tsx` / `*.test.ts` files
+- **Coverage**: Vitest built-in `v8` provider — run via `pnpm --filter {app} test --coverage`
+- **What to test**: Shared components (`packages/ui/`), utility functions (`packages/shared/`), form validation, custom hooks, complex state logic
+
+### E2E Testing — Playwright ([ADR-018](./adr/018-e2e-testing-playwright.md))
+
+- **Framework**: Playwright with `playwright.config.ts` at `web/` root
+- **Test files**: `web/e2e/*.spec.ts`
+- **Browsers**: Chromium (primary), Firefox, WebKit (CI matrix)
+- **Scope**: Critical user flows only — registration, login, attendance, payment, belt promotion
+- **CI integration**: Runs AFTER unit tests pass. Not gating on every PR — runs on `main` branch and pre-release
+- **Test fixtures**: Shared fixtures for authenticated sessions, test tenants, seeded data
+
+---
+
+## 9. Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Backend API | `api/` | All REST endpoints defined in TRDs 04, 09–18 | Various | See respective TRDs | See respective TRDs |
+| CloudFront CDN | Infrastructure | Static asset delivery + signed file URLs | GET | N/A | Static files, signed URLs |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — client-side SPA applications_ | | | | |
+
 
 ## 10. Implementation Notes
 

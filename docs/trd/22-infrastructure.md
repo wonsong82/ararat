@@ -1,7 +1,7 @@
 # 22. Infrastructure & Deployment
 
 **Related TRDs**: All sections  
-**Related ADRs**: [ADR-011](./adr/011-nestjs-backend.md), [ADR-013](./adr/013-aws-cloud-platform.md), [ADR-014](./adr/014-github-actions-cicd.md)  
+**Related ADRs**: [ADR-011](./adr/011-nestjs-backend.md), [ADR-013](./adr/013-aws-cloud-platform.md), [ADR-014](./adr/014-github-actions-cicd.md), [ADR-016](./adr/016-backend-testing-jest.md), [ADR-017](./adr/017-frontend-testing-vitest.md), [ADR-018](./adr/018-e2e-testing-playwright.md), [ADR-019](./adr/019-api-documentation-swagger.md), [ADR-020](./adr/020-logging-nestjs-pino.md)  
 **Phase**: MVP (Phase 1)
 
 ---
@@ -84,13 +84,33 @@ Each app has its own CI/CD workflow triggered by changes to its directory:
 1. **Source Control**: GitHub.
 2. **CI/CD**: GitHub Actions ([ADR-014](./adr/014-github-actions-cicd.md)).
    > Each app has its own GitHub Actions workflow file, triggered only by changes to that app's directory (see Deployment Strategy above for trigger paths).
-3. **Automated Testing**: Unit tests, integration tests, E2E tests on every push.
+3. **Automated Testing**: Backend unit/integration via **Jest** ([ADR-016](./adr/016-backend-testing-jest.md)), frontend unit/component via **Vitest** ([ADR-017](./adr/017-frontend-testing-vitest.md)), E2E via **Playwright** ([ADR-018](./adr/018-e2e-testing-playwright.md)) on every push.
 4. **Build**: Docker image built and pushed to Amazon ECR.
 5. **Staging Deployment**: Auto-deploy to staging environment.
 6. **Staging Tests**: Smoke tests, performance tests.
 7. **Manual Approval**: Team reviews and approves for production.
 8. **Production Deployment**: Blue-green deployment (zero downtime).
 9. **Monitoring**: Automated rollback if error rate spikes.
+
+#### GitHub Actions Workflow Structure
+
+Each workflow has four stages: **lint/test → build → deploy-staging → deploy-production**.
+
+**Backend API (`api.yml`)**:
+1. **Lint & Test**: checkout → setup Node 20 → `npm ci` → `npm run lint` → `npm run test` (Jest unit + integration) → `npm run test:e2e` (with test PostgreSQL via service container)
+2. **Build & Push**: Docker multi-stage build → tag with git SHA + `latest` → push to ECR
+3. **Deploy Staging**: update ECS task definition with new image tag → deploy to staging service → wait for stability → run smoke tests
+4. **Deploy Production**: requires manual approval (`environment: production`) → blue-green ECS deployment → health check (`/api/v1/health`) → automatic rollback if error rate > 1% for 5 minutes
+
+**Web Apps (`web-{app}.yml`)**:
+1. **Lint & Test**: checkout → setup Node 20 → `pnpm install --frozen-lockfile` → `pnpm --filter {app} lint` → `pnpm --filter {app} typecheck` → `pnpm --filter {app} test` (Vitest)
+2. **Build**: `pnpm --filter {app} build` → upload `dist/` as artifact
+3. **Deploy Staging**: sync `dist/` to S3 staging bucket → invalidate CloudFront → run Lighthouse CI (fail if LCP > 3s)
+4. **Deploy Production**: requires manual approval → sync to S3 production bucket → invalidate CloudFront
+
+**Kiosk (`kiosk.yml`)**:
+1. **Build & Test**: `xcodebuild test` with iOS simulator
+2. **Archive**: `xcodebuild archive` → export IPA (manual App Store upload via Transporter)
 
 ### Database
 
@@ -100,6 +120,21 @@ Each app has its own CI/CD workflow triggered by changes to its directory:
 - Point-in-time recovery capability.
 - Read replicas for scaling read-heavy workloads.
 - Row-level security (RLS) for multi-tenancy enforcement.
+
+#### Database Migration Strategy
+
+- **Tool**: TypeORM CLI migrations (`typeorm migration:generate`, `typeorm migration:run`)
+- **Migration files**: `api/src/migrations/{timestamp}-{DescriptiveName}.ts`
+- **Development workflow**:
+  1. Modify entity files in `api/src/`
+  2. `npx typeorm migration:generate -n DescriptiveName` — auto-generates migration from entity diff
+  3. Review generated SQL (verify no destructive changes)
+  4. `npx typeorm migration:run` — apply locally
+  5. Commit migration file alongside entity changes
+- **Production deployment**: migrations run automatically on ECS task startup (`synchronize: false`, `migrationsRun: true` in TypeORM config). The first task to start acquires a PostgreSQL advisory lock to prevent concurrent migration execution.
+- **Zero-downtime rule**: migrations MUST be backward-compatible. No column renames or drops in a single step. Use multi-step pattern: (1) add new column → deploy → (2) migrate data → deploy → (3) drop old column.
+- **Rollback**: each migration has `up()` and `down()` methods. `npx typeorm migration:revert` undoes the last migration. In production, rollback is a new migration (forward-only).
+- **Seeding**: development seeds in `api/src/seeds/` run via `npm run seed`. Production initial setup via admin API — never via seeds.
 
 ### Caching
 
@@ -117,6 +152,15 @@ Each app has its own CI/CD workflow triggered by changes to its directory:
 - Batch processing (daily cron jobs, report generation).
 - Retry logic with exponential backoff.
 - Dead-letter queue for failed messages.
+
+### Logging — nestjs-pino ([ADR-020](./adr/020-logging-nestjs-pino.md))
+
+- **Framework**: `nestjs-pino` — Pino logger as NestJS `LoggerService` global replacement
+- **Format**: Structured JSON in all environments. `pino-pretty` for human-readable output in development only.
+- **Request context**: Auto-attaches `requestId`, `tenantId`, `userId`, `method`, `url` to every log line via NestJS middleware
+- **Log levels**: `debug` in development, `info` in production
+- **Transport**: stdout → CloudWatch Logs agent picks up container stdout in ECS
+- **Configuration**: `LoggerModule.forRoot()` in `app.module.ts`
 
 ### Monitoring & Alerting
 
@@ -170,6 +214,47 @@ Each app has its own CI/CD workflow triggered by changes to its directory:
 - **Auto-Scaling**: Scale down during off-peak hours.
 - **Data Transfer**: Minimize cross-region data transfer.
 - **Storage**: Lifecycle policies to archive old data (e.g., attendance records > 1 year).
+
+### Service Configuration
+
+| Service | Config | Staging | Production |
+|---------|--------|---------|------------|
+| ECS Task | CPU / Memory | 0.5 vCPU / 1 GB | 1 vCPU / 2 GB |
+| ECS Service | Min / Max tasks | 1 / 2 | 2 / 10 |
+| ECS Auto-Scaling | Trigger | CPU > 70% for 3 min | CPU > 70% for 3 min |
+| RDS PostgreSQL | Instance type | db.t3.small | db.t3.medium |
+| RDS | Storage | 20 GB gp3 | 100 GB gp3 |
+| RDS | Multi-AZ | No | Yes |
+| RDS | Automated backups | 7-day retention | 30-day retention |
+| RDS | Read replicas | 0 | 1 (for reporting queries) |
+| ElastiCache Redis | Node type | cache.t3.micro | cache.t3.small |
+| ElastiCache | Cluster mode | Disabled (single node) | Disabled (primary + 1 replica) |
+| ElastiCache | Max memory policy | allkeys-lru | allkeys-lru |
+| SQS Queues | Visibility timeout | 30s | 30s |
+| SQS | DLQ max receives | 3 | 3 |
+| S3 | Storage class | Standard | Standard (lifecycle → IA after 90 days) |
+| CloudFront | Price class | PriceClass_100 (NA+EU) | PriceClass_100 (NA+EU) |
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| AWS ECS Fargate | Infrastructure | Container orchestration | API | Task definitions | Running containers |
+| AWS RDS PostgreSQL | Infrastructure | Database hosting | TCP/5432 | SQL queries | Query results |
+| AWS ElastiCache Redis | Infrastructure | Cache + session store | TCP/6379 | Redis commands | Cached data |
+| AWS S3 | Infrastructure | Object storage | HTTPS | S3 API calls | Objects |
+| AWS CloudFront | Infrastructure | CDN + signed URLs | HTTPS | Distribution config | Cached content |
+| AWS SQS | Infrastructure | Message queuing | HTTPS | SendMessage | Message ID |
+| AWS CloudWatch | Infrastructure | Metrics + logging | HTTPS | PutMetricData, PutLogEvents | Dashboards, alerts |
+| AWS ECR | Infrastructure | Container registry | HTTPS | Docker push/pull | Container images |
+| GitHub Actions | External | CI/CD pipeline | HTTPS | Workflow triggers | Build + deploy results |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — infrastructure layer, no application endpoints_ | | | | |
+
 
 ### Implementation Notes
 

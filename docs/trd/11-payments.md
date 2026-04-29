@@ -484,6 +484,58 @@ Chronological list of all payments:
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Stripe API | External | `POST /v1/customers`, `POST /v1/subscriptions`, `POST /v1/refunds` | POST | Stripe API objects | Stripe response objects |
+| Stripe Webhooks | External | Receives `invoice.paid`, `invoice.payment_failed`, `charge.refunded`, `customer.subscription.deleted` | POST (inbound) | Stripe event JSON | `200 OK` |
+| Notification Service | Internal (TRD 13) | Payment confirmations, failure alerts, receipt delivery | Internal call | `{ recipientId, templateId, data }` | `{ notificationId }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/membership-plans` | GET/POST/PATCH | Admin App | Plan config JSON | Plan list or detail |
+| `/api/v1/tenants/{tenantId}/memberships` | GET/POST/PATCH | Admin App, Parent App | Membership data JSON | Membership list or detail |
+| `/api/v1/tenants/{tenantId}/invoices` | GET | Admin App, Parent App | `?status=&memberId=` | Invoice list |
+| `/api/v1/tenants/{tenantId}/payments` | GET/POST | Admin App, Parent App | Payment data JSON | Payment list or detail |
+| `/api/v1/tenants/{tenantId}/refunds` | POST | Admin App | `{ paymentId, amount, reason }` | Refund confirmation |
+| `/api/v1/webhooks/stripe` | POST | Stripe | Stripe event JSON | `200 OK` |
+
+---
+
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Equipment & Retail Sales
+- **Use case**: Sell uniforms (dobok), sparring gear, belts, and other equipment through the platform
+- **Catalog**: Admin manages product catalog (name, price, sizes, inventory count)
+- **Purchase flow**: Parent selects items → checkout via Stripe → order confirmation notification
+- **Inventory tracking**: Stock count decremented on purchase, low-stock alerts to admin
+- **No shipping**: In-person pickup only (gym front desk)
+
+### Event Fees
+- **Use case**: Charge fees for special events (seminars, tournaments, summer camps)
+- **Admin setup**: Create event with fee, capacity limit, registration deadline
+- **Payment**: One-time Stripe charge (not recurring), linked to event registration
+- **Integration**: Ties into Simsa exam fees (TRD 12) and notification system (TRD 13)
+
+### Blacklist Management
+- **Use case**: Block specific payment methods or customers with history of chargebacks/fraud
+- **Admin controls**: Manage blacklisted Stripe customer IDs or email addresses
+- **Enforcement**: Blacklisted entries blocked at payment creation, with admin notification
+
+### Tax Calculation by State
+- **Use case**: Apply correct sales tax rates for equipment/retail sales based on gym's state
+- **Approach**: Stripe Tax integration or state tax rate lookup table
+- **Scope**: US states only (ADR-001), covers physical goods sales (not membership dues)
+- **Admin config**: Tax rate override per product category if needed
+
+---
+
 ## Implementation Notes
 
 > _This section will be updated as the feature is implemented._

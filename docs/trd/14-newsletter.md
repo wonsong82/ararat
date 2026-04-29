@@ -260,6 +260,24 @@ Full newsletter creation, editing, audience targeting, and read receipt analytic
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| SendGrid | External | `POST /v3/mail/send` | POST | `{ personalizations, from, subject, content, attachments }` | `202 Accepted` |
+| File Service | Internal (TRD 19) | Upload newsletter attachments | Internal call | `{ file, category: "newsletter_attachment" }` | `{ fileId, url }` |
+| Notification Service | Internal (TRD 13) | Push notification for new newsletter | Internal call | `{ recipientId, templateId, data }` | `{ notificationId }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/newsletters` | GET/POST | Admin App, Parent App | Newsletter data JSON | Newsletter list or detail |
+| `/api/v1/tenants/{tenantId}/newsletters/{id}` | GET/PATCH/DELETE | Admin App | Newsletter update JSON | Newsletter detail |
+| `/api/v1/tenants/{tenantId}/newsletters/{id}/publish` | POST | Admin App | `{ audience, channels }` | Publish confirmation |
+| `/api/v1/tenants/{tenantId}/newsletters/{id}/recipients` | GET | Admin App | `?status=&cursor=&limit=` | Recipient list with read status |
+
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

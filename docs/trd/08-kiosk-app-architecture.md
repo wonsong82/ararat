@@ -652,6 +652,21 @@ Kiosk-specific security measures supplement the platform-wide security policies 
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Backend API | `api/` | Auth, attendance, member, device endpoints (TRDs 04, 09, 10) | Various | See respective TRDs | See respective TRDs |
+| Apple Vision Framework | On-device | Local face detection + embedding extraction | N/A | Camera frame | Face embedding vector |
+| iOS Keychain | On-device | Secure credential storage | N/A | Token/key data | Stored secrets |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — native iOS app, no exposed endpoints_ | | | | |
+
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

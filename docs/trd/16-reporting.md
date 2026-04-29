@@ -278,10 +278,33 @@ Four visualization types provide at-a-glance operational insights on the Admin A
 #### Report Generation Service
 
 - **SQL aggregation queries**: Each report type has dedicated query builders that construct optimized SQL with `GROUP BY`, `COUNT`, `SUM`, `AVG` aggregations. Queries are tenant-scoped via `WHERE tenant_id = ?`.
-- **Pagination**: Report JSON responses support cursor-based pagination for large datasets. PDF/Excel exports include all rows (no pagination).
+- **Pagination**: Report JSON responses use offset-based pagination (`page`, `pageSize`, `totalRows`) — a deliberate deviation from TRD 05's cursor-based convention, since report consumers need random page access ("jump to page N"). PDF/Excel exports include all rows (no pagination).
 - **PDF generation**: Use a PDF library (e.g., `pdfkit` or `puppeteer` for HTML-to-PDF) to render report with header (gym name, report title, date range, generated timestamp), data table, and summary statistics.
 - **Excel generation**: Use `exceljs` to create XLSX with formatted headers, data rows, summary row, and auto-sized columns.
 - **Caching**: Dashboard stats and trend data are cached in Redis with 5-minute TTL. Report generation is not cached (always fresh).
+
+#### Aggregation Formulas
+
+| Metric | Formula | Notes |
+|--------|---------|-------|
+| Attendance rate | `classes_attended / classes_available_for_member` × 100 | Only count classes the member was enrolled in, not all gym classes |
+| Churn rate (monthly) | `withdrawals_this_month / active_members_at_month_start` × 100 | Active = status=active at first day of month |
+| Revenue by category | `SUM(amount) WHERE payment_type = ? GROUP BY month` | Amounts in cents, convert to dollars for display |
+| Net growth | `new_enrollments - withdrawals` for the period | Includes re-enrollments as new |
+| Pass rate (심사) | `passed / total_tested` × 100 per belt level | Only count members with result recorded |
+| Retention funnel | Active: attendance in last 30 days; At-Risk: no attendance 7–30 days; Churned: no attendance 30+ days OR status=withdrawn | Snapshot calculation, not historical |
+
+#### Timezone Handling
+
+- All date range filters (`startDate`, `endDate`) are interpreted in the gym's local timezone (`SystemSetting.timezone` from [TRD 02](./02-multi-tenancy.md))
+- Server converts to UTC for database queries
+- Response timestamps are in UTC; frontend formats per user's locale
+
+#### Dashboard Cache Invalidation
+
+- Dashboard stats and trend data cached in Redis with 5-minute TTL (unchanged)
+- Write-through invalidation: attendance check-in → invalidate `attendance-trend` cache; payment received → invalidate `revenue-trend` cache; member status change → invalidate `member-distribution` cache
+- Invalidation is best-effort — stale data is acceptable for up to 5 minutes
 
 #### Scheduled Report Cron
 
@@ -437,6 +460,25 @@ Unified report generation and exploration interface.
 | Submit schedule dialog | `POST /reports/schedule` — create recurring report |
 
 ---
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Redis (ElastiCache) | Infrastructure | Cache read/write | GET/SET | Cache key + TTL | Cached JSON |
+| SendGrid | External | `POST /v3/mail/send` | POST | Email with PDF/XLSX attachment | `{ statusCode }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/reports/{type}` | GET | Admin App | `?startDate=&endDate=&format=json\|pdf\|excel` | Report data or file download |
+| `/api/v1/tenants/{tenantId}/dashboard/stats` | GET | Admin App | — | Dashboard summary JSON |
+| `/api/v1/tenants/{tenantId}/dashboard/{trend}` | GET | Admin App | — | Trend data JSON |
+| `/api/v1/tenants/{tenantId}/reports/schedule` | POST/GET/PATCH/DELETE | Admin App | Schedule config JSON | Schedule confirmation |
+
+---
+
 
 ## Implementation Notes
 

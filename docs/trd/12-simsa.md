@@ -297,6 +297,43 @@ Comprehensive view of a single 심사 exam with all management capabilities.
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Notification Service | Internal (TRD 13) | 심사 announcements, registration confirmations, result notifications | Internal call | `{ recipientId, templateId, data }` | `{ notificationId }` |
+| Payment Service | Internal (TRD 11) | 심사 fee processing | Internal call | `{ memberId, amount, type: "simsa" }` | `{ paymentId }` |
+| File Service | Internal (TRD 19) | Certificate PDF storage | Internal call | `{ file, category: "simsa_certificate" }` | `{ fileId, url }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/simsa` | GET/POST/PATCH | Admin App | 심사 event config JSON | 심사 list or detail |
+| `/api/v1/tenants/{tenantId}/simsa/{id}/registrations` | GET/POST | Admin App, Parent App | Registration data JSON | Registration list or detail |
+| `/api/v1/tenants/{tenantId}/simsa/{id}/results` | GET/POST | Admin App, Parent App | Result data JSON | Result list or detail |
+| `/api/v1/tenants/{tenantId}/simsa/{id}/eligibility` | GET | Admin App, Parent App | `?memberId=` | Eligibility check result |
+
+
+---
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Kukkiwon TCON Data Export
+- **Use case**: Export 심사 results in Kukkiwon TCON system format for official 승품/단 certification submission
+- **Export format**: CSV or XML matching TCON import schema (member name, DOB, current rank, test date, result)
+- **Admin flow**: Select completed 심사 → Export for TCON → download file → manually upload to TCON portal
+- **Data mapping**: Map Ararat belt levels to Kukkiwon 급/품/단 codes
+
+### Kukkiwon Certification Tracking
+- **Use case**: Track official Kukkiwon certification numbers and issuance dates for each member
+- **Data fields**: Kukkiwon certificate number, issue date, expiry date (if applicable), rank certified
+- **Admin entry**: Manual entry in member profile after receiving physical certificate from Kukkiwon
+- **Parent view**: Certification status visible in member profile on Parent App
+- **Reporting**: Certification tracking report — members pending certification, certified members list
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

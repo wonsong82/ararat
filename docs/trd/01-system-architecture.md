@@ -215,6 +215,19 @@ Cross-cutting concerns (`common/`) provide shared infrastructure: tenant-scoping
 - **CI/CD**: GitHub Actions ([ADR-014](./adr/014-github-actions-cicd.md))
 
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| _None — cross-cutting architecture overview_ | | | | | |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — cross-cutting architecture overview_ | | | | |
+
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

@@ -561,6 +561,40 @@ Multi-step form presented after a parent creates their account (completes OTP ve
 
 ---
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Notification Service | Internal (TRD 13) | Dispatch registration confirmations, withdrawal notices | Internal call | `{ recipientId, templateId, data }` | `{ notificationId }` |
+| Payment Service | Internal (TRD 11) | Create initial membership on registration | Internal call | `{ memberId, planId }` | `{ membershipId }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/members` | GET/POST | Admin App, Parent App | Member data JSON | Member list or detail |
+| `/api/v1/tenants/{tenantId}/members/{id}` | GET/PATCH/DELETE | Admin App, Parent App | Member update JSON | Member detail |
+| `/api/v1/tenants/{tenantId}/parents` | GET/POST | Admin App | Parent data JSON | Parent list or detail |
+| `/api/v1/tenants/{tenantId}/parents/{id}/children` | GET/POST/DELETE | Admin App, Parent App | Child link JSON | Parent-child associations |
+| `/api/v1/tenants/{tenantId}/registrations` | GET/POST/PATCH | Admin App | Registration data JSON | Registration list or detail |
+| `/api/v1/tenants/{tenantId}/members/{id}/withdraw` | POST | Admin App, Parent App | `{ reason }` | Withdrawal confirmation |
+
+---
+
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Exit Survey
+- **Trigger**: When a member's status is changed to `withdrawn` (via Admin App or Parent App withdrawal flow)
+- **Survey delivery**: Optional survey link sent via notification to the parent/member upon withdrawal
+- **Data captured**: Reason for leaving (predefined categories + free text), satisfaction rating, likelihood to return
+- **Admin view**: Aggregated exit survey results in Admin App reporting dashboard
+- **Privacy**: Survey responses stored anonymized after 90 days, COPPA-compliant for minors
+
+---
+
 ## Implementation Notes
 
 > _This section will be updated as the feature is implemented._

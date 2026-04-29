@@ -149,9 +149,10 @@ interface AuthState {
 
 #### Monitor App — Token via URL or Device Registration
 
-- Option A: URL token `https://monitor.ararat.app?token=<jwt>` (JWT with tenant_id, no user_id, read-only scope).
-- Option B: Device registration (admin registers display device, system issues long-lived device token).
-- No login screen — display auto-authenticates.
+Both authentication methods are supported:
+- **URL token** (quick setup): `https://monitor.ararat.app?token=<jwt>` — JWT contains `tenant_id`, no `user_id`, read-only scope. Ideal for temporary or demo setups.
+- **Device registration** (permanent installs): Admin registers the display device in Admin App, system issues a long-lived device token stored in `localStorage`. Ideal for fixed TV displays.
+- No login screen — display auto-authenticates using whichever method was configured.
 ### Role-Based Access Control (RBAC)
 
 | Resource | Owner | Manager | Instructor | Parent | Member |
@@ -190,6 +191,25 @@ Every API endpoint checks the user's role and tenant_id before processing the re
 6. If both checks pass: process request
 7. If either check fails: return 403 Forbidden
 ```
+
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Twilio | External | `POST /Messages.json` | POST | `{ To, From, Body }` | `{ sid, status }` |
+| Redis (ElastiCache) | Infrastructure | N/A (client library) | SET/GET/DEL | Refresh tokens, rate limit counters | Token data, counter values |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/auth/otp/send` | POST | Parent App | `{ phone }` | `{ message }` |
+| `/api/v1/auth/otp/verify` | POST | Parent App | `{ phone, code }` | `{ accessToken, user }` |
+| `/api/v1/auth/login` | POST | Admin App | `{ email, password }` | `{ requires2fa, tempToken }` |
+| `/api/v1/auth/2fa/verify` | POST | Admin App | `{ tempToken, code }` | `{ accessToken, user }` |
+| `/api/v1/auth/refresh` | POST | All Apps | Cookie (httpOnly) | `{ accessToken }` |
+| `/api/v1/auth/logout` | POST | All Apps | Cookie (httpOnly) | `204 No Content` |
 
 
 ### Implementation Notes

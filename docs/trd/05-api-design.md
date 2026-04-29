@@ -1,7 +1,7 @@
 # 5. API Design
 
 **Related TRDs**: [04-auth](./04-auth.md), [07-web-frontend-architecture](./07-web-frontend-architecture.md), [19-file-storage](./19-file-storage.md)  
-**Related ADRs**: [ADR-008](./adr/008-api-first-restful-backend.md)  
+**Related ADRs**: [ADR-008](./adr/008-api-first-restful-backend.md), [ADR-019](./adr/019-api-documentation-swagger.md)  
 **Phase**: MVP (Phase 1)
 
 ---
@@ -167,6 +167,30 @@ type: "profile_photo|class_photo|newsletter_attachment|certificate"
 - Images: JPEG, PNG, WebP
 - Documents: PDF
 - Videos: MP4, MOV (future)
+
+
+### API Documentation — @nestjs/swagger ([ADR-019](./adr/019-api-documentation-swagger.md))
+
+All API endpoints are documented via **@nestjs/swagger** auto-generation from NestJS decorators:
+
+- **Controller decorators**: `@ApiTags()`, `@ApiOperation()`, `@ApiResponse()`, `@ApiBearerAuth()` on every controller
+- **DTO decorators**: `@ApiProperty()` on all request/response DTOs — generates OpenAPI schema definitions
+- **Swagger UI**: Available at `/api/docs` (development and staging only, disabled in production via environment guard)
+- **OpenAPI spec**: JSON export at `/api/docs-json` for client SDK generation if needed
+- **Validation sync**: DTOs use `class-validator` decorators that `@nestjs/swagger` reads — single source for validation, serialization, and documentation
+- **NestJS CLI plugin**: `@nestjs/swagger/plugin` auto-infers `@ApiProperty()` from TypeScript types, reducing decorator boilerplate
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| _None — cross-cutting API conventions_ | | | | | |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — cross-cutting API conventions_ | | | | |
 
 
 ### Implementation Notes

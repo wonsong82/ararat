@@ -82,6 +82,7 @@ The feed serves as the primary communication channel between instructors and par
 ### 15.2.5 Weekly Progress Summary
 
 - **Cron job**: Runs every Sunday at 6:00 PM (gym's local timezone)
+  - Timezone resolved from `SystemSetting.timezone` per gym (see [TRD 02](./02-multi-tenancy.md)). All scheduled cron jobs use the gym's configured timezone.
 - For each active member, the system generates a summary post:
   1. Count classes attended that week
   2. Fetch any training notes and observations from the week
@@ -157,7 +158,7 @@ Auto-generated posts (`type=Milestone`, `visibility=Individual`) for:
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| `page` | INT | 1 | Page number |
+| `cursor` | STRING | — | Opaque pagination cursor (base64-encoded, per [TRD 05](./05-api-design.md)) |
 | `limit` | INT | 20 | Posts per page (max 50) |
 | `type` | STRING | — | Filter by post type |
 | `from` | DATE | — | Posts from this date |
@@ -325,6 +326,27 @@ Instructors and admins use this screen to create, manage, and review activity fe
 - Both can view all reactions and comments
 
 ---
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| AWS S3 | Infrastructure | PutObject, GetObject | PUT/GET | Photo binary | Object metadata |
+| Notification Service | Internal (TRD 13) | Dispatch notifications | Internal call | `{ recipientId, type, data }` | `{ notificationId }` |
+| Attendance Service | Internal (TRD 10) | Query attendance records | Internal call | `{ classId, date }` | `{ attendees[] }` |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/feed` | GET | Parent App, Admin App | `?cursor=&limit=&type=&from=&to=` | Feed posts (paginated) |
+| `/api/v1/tenants/{tenantId}/feed` | POST | Admin App (instructors) | `{ classId, type, content, visibility }` | Created post |
+| `/api/v1/tenants/{tenantId}/feed/{id}/photos` | POST | Admin App | Multipart file upload | Photo metadata |
+| `/api/v1/tenants/{tenantId}/feed/{id}/reactions` | POST | Parent App | `{ type, content? }` | Created reaction |
+| `/api/v1/tenants/{tenantId}/members/{id}/feed` | GET | Parent App, Admin App | `?cursor=&limit=` | Member-specific feed |
+
+---
+
 
 ## 15.6 Implementation Notes
 

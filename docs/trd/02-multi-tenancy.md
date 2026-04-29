@@ -65,6 +65,19 @@ Each gym (tenant) has a `SystemSetting` record with the following configurable p
 All settings are stored in a single `SystemSetting` table with `tenant_id` as the primary scoping key. Changes to settings are logged in the audit trail with actor, timestamp, and previous/new values.
 
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| _None — cross-cutting pattern_ | | | | | |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — cross-cutting pattern_ | | | | |
+
+
 ### Implementation Notes
 
 > _This section will be updated as the feature is implemented._

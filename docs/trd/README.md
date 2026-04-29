@@ -86,6 +86,11 @@ Architectural decisions are documented in [`adr/`](./adr/). See the [ADR Index](
 | [013](./adr/013-aws-cloud-platform.md) | AWS Cloud Platform | 01, 19, 22 |
 | [014](./adr/014-github-actions-cicd.md) | GitHub Actions CI/CD | 22 |
 | [015](./adr/015-frontend-library-stack.md) | Frontend Library Stack | 01, 07 |
+| [016](./adr/016-backend-testing-jest.md) | Backend Testing — Jest | 05, 22 |
+| [017](./adr/017-frontend-testing-vitest.md) | Frontend Testing — Vitest | 07, 22 |
+| [018](./adr/018-e2e-testing-playwright.md) | E2E Testing — Playwright | 07, 22 |
+| [019](./adr/019-api-documentation-swagger.md) | API Documentation — @nestjs/swagger | 05, 22 |
+| [020](./adr/020-logging-nestjs-pino.md) | Logging — nestjs-pino | 01, 22 |
 
 ---
 

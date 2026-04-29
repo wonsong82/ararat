@@ -1,58 +1,10 @@
-# AGENTS.md — Ararat
+# AGENTS.md
 
 ## PROJECT OVERVIEW
 
-**Ararat** is a multi-tenant SaaS platform for managing Taekwondo gyms in the United States. Gyms are primarily run by Korean-American owners (관장님) serving diverse members (Korean, Hispanic, English-speaking families). The platform supports trilingual operation (English, Korean, Spanish).
+> **This section is auto-populated.** After the PRD is created, the agent updates this section with project description, applications, target users, and domain terms. After the TRD is created, key architecture decisions and tech stack are added. This placeholder is replaced entirely — do not edit manually.
 
-### Applications
-
-| App | Platform | Primary User | Description |
-|-----|----------|--------------|-------------|
-| **Parent/Member App** | Web (mobile-responsive) | Parents, adult members | Registration, activity feed, attendance history, payments, notifications |
-| **Admin App** | Web | Gym owner, staff | Member management, billing, 심사 scheduling, reporting, newsletters |
-| **Attendance Kiosk App** | iPad/Tablet | Children (self check-in) | Face recognition, QR code, and manual check-in at gym entrance |
-| **Monitor App** | TV/Large Display | Staff, visitors | Live attendance board, schedule, announcements (optional) |
-
-### Domain Terms
-
-| Term | Meaning |
-|------|---------|
-| 관장님 (Gwanjangnim) | Gym owner/master — primary admin user |
-| 도장 (Dojang) | Taekwondo gym/training hall |
-| 심사 (Simsa) | Belt promotion examination |
-| 띠 (Tti) | Belt — represents student rank |
-| 수련생 (Suryeonsaeng) | Student/trainee |
-| 사범 (Sabeom) | Instructor |
-| 학부모 (Hakbumo) | Parent/guardian |
-| 탈퇴 (Talhoe) | Membership withdrawal |
-| 가정통신문 | Formal newsletter from gym to parents |
-| 승품·단 | Official Kukkiwon belt promotion certification |
-
-### Key Architecture Decisions
-
-- **Multi-tenant**: Single deployment, data-isolated per gym
-- **US market only**: Payments via Stripe (USD), SMS via Twilio, email via SendGrid
-- **Trilingual**: i18n from Day 1 — English (default), Korean, Spanish
-- **Face recognition**: On-device only (iPad). No biometric data in the cloud. COPPA/BIPA compliant.
-- **Messenger integration**: Agnostic adapter pattern — KakaoTalk first, extensible to WhatsApp/LINE/etc.
-- **API-first**: RESTful backend serving all four applications
-
-### Tech Stack (Finalized)
-
-| Layer | Technology | ADR |
-|-------|-----------|-----|
-| Backend | Node.js + NestJS (TypeScript) | [ADR-011](docs/trd/adr/011-nestjs-backend.md) |
-| Frontend | React + Vite (TypeScript) | [ADR-012](docs/trd/adr/012-react-vite-frontend.md) |
-| Kiosk App | Swift (native iOS) | [ADR-004](docs/trd/adr/004-face-recognition-on-device.md) |
-| Database | PostgreSQL (RDS) | — |
-| Cache/Queue | Redis (ElastiCache) + SQS | — |
-| Cloud | AWS (ECS Fargate → EKS migration path) | [ADR-013](docs/trd/adr/013-aws-cloud-platform.md) |
-| CI/CD | GitHub Actions | [ADR-014](docs/trd/adr/014-github-actions-cicd.md) |
-| Containerization | Docker + Amazon ECR | [ADR-013](docs/trd/adr/013-aws-cloud-platform.md) |
-| Storage/CDN | S3 + CloudFront | — |
-| SMS | Twilio | — |
-| Email | SendGrid | — |
-| Push | Firebase Cloud Messaging | — |
+_(No project defined yet. Start by creating a PRD.)_
 
 ---
 
@@ -62,8 +14,8 @@
 
 | Document | Purpose | Contains | Does NOT contain |
 |----------|---------|----------|------------------|
-| **PRD.md** | High-level product description & requirements | Business goals, user stories, feature scope, acceptance criteria | Technical implementation details |
-| **TRD** | Technical details & implementation design — **living document** | `docs/trd/` directory with 22 section files (4-part structure: Foundation, App Architecture, Features, Infrastructure), each with Implementation Notes. Index at `docs/trd/README.md`. ADRs in `docs/trd/adr/`. | Raw code dumps, implementation tracking/checklists |
+| **PRD.md** | High-level product description & requirements | `**Status**: Draft/Confirmed` field, business goals, user stories, feature scope, acceptance criteria | Technical implementation details |
+| **TRD** | Technical details & implementation design — **living document** | `docs/trd/` directory with section files, each with Implementation Notes. Index at `docs/trd/README.md`. ADRs in `docs/trd/adr/`. | Raw code dumps, implementation tracking/checklists |
 | **IMP** | Implementation plan & progress tracking — **split by phase** | `docs/imp/` directory with phase files. Index at `docs/imp/README.md`. | Product requirements, technical specs |
 | **README.md** | End-user & developer usage guide | Setup, usage, configuration, API reference | Internal planning or tracking |
 
@@ -85,29 +37,58 @@ Every project follows this lifecycle. The agent MUST detect the current phase an
 
 #### Phase Detection
 
-On session start, check which documents exist:
+On session start, check which documents exist and their status:
 
 ```
 1. Does docs/PRD.md exist?          → NO  → Start Phase: PRD
+   → YES, Status: Draft → Continue PRD (present to user for review)
+   → YES, Status: Confirmed → PRD complete
 2. Does docs/trd/README.md exist?    → NO  → Start Phase: TRD
+   → YES, Status: Draft → Continue TRD (present to user for review)
+   → YES, Status: Confirmed → TRD complete
 3. Does docs/imp/README.md exist?    → NO  → Start Phase: IMP
-4. imp/README.md exists              → Read imp/README.md → Resume implementation
+   → YES, Status: Draft → Continue IMP (present to user for review)
+   → YES, Status: Confirmed → IMP complete
+4. All documents Status: Confirmed → Read imp/README.md → Resume implementation
 ```
 
 **Always announce the detected phase to the user:**
-> "I see [PRD/TRD/IMP] exists but [next doc] is missing. We should work on [next doc] next."
+> "I see [document] exists with Status: [Draft/Confirmed]. [Action needed]."
+
+Examples:
+- _"PRD.md exists but is still Draft. Let me present it for your review."_
+- _"PRD is Confirmed but TRD is missing. We should work on the TRD next."_
+- _"All docs are Confirmed. Resuming implementation from imp/README.md."_
+
+#### Document Status (CRITICAL)
+
+Every phase document includes a `**Status**` field on its first line (after the title). This field gates phase transitions — the agent MUST NOT advance to the next phase until the current document is Confirmed.
+
+| Status | Meaning | Next action |
+|--------|---------|-------------|
+| `Draft` | Agent has created or is iterating on the document | Present to user for review |
+| `Confirmed` | User has reviewed and approved the document | Proceed to next phase |
+
+**Rules:**
+- Documents are created with `**Status**: Draft`
+- Only the **user** can trigger a transition to `Confirmed` — the agent NEVER self-confirms
+- If the user requests changes to a Draft document, iterate and keep `Draft` until user approves
+- A `Confirmed` document can be reopened (set back to `Draft`) if the user requests significant changes
 
 #### New Project Flow
 
 ```
-PRD → TRD → IMP → Implementation
+PRD → Review → TRD → Review → IMP → Review → Implementation
 ```
 
-1. **PRD Phase**: Gather requirements from the user. Create `docs/PRD.md` with business goals, user stories, feature scope, and acceptance criteria. PRD defines **what** and **why**.
-2. **TRD Phase**: Translate PRD into technical specifications. Create `docs/trd/` directory with section files, index, and ADRs. TRD defines **how** — completely. All technology choices (language, framework, database, cloud provider, key libraries) must be finalized with ADRs before moving to IMP. No "Option A vs Option B" — only decisions. After TRD, the PRD is never referenced during development.
-3. **IMP Phase**: Create `docs/imp/` directory with phased implementation plan. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file. Index at `docs/imp/README.md`, one file per phase.
-4. **Pre-Implementation Checkpoint**: Once PRD, TRD, and IMP are all finalized, ask the user: _"Project structure is defined. Should I tailor AGENTS.md to remove rules that don't apply to this project?"_ If confirmed, remove irrelevant sections and add a note: `<!-- Tailored on YYYY-MM-DD -->`.
-5. **Implementation Phase**: Pick up tasks from `imp/README.md`, follow the Workflow below for each code change.
+1. **PRD Phase**: Gather requirements from the user. Create `docs/PRD.md` with `**Status**: Draft`. PRD defines **what** and **why** — business goals, user stories, feature scope, and acceptance criteria.
+2. **PRD Review**: Present the PRD to the user. Iterate until the user confirms. Mark `**Status**: Confirmed`. **Do NOT start TRD until PRD is Confirmed.**
+3. **TRD Phase**: Translate confirmed PRD into technical specifications. Create `docs/trd/` directory with `**Status**: Draft` in `README.md`. TRD defines **how** — completely. All technology choices must be finalized with ADRs before moving to IMP. No "Option A vs Option B" — only decisions.
+4. **TRD Review**: Present the TRD to the user. Iterate until the user confirms. Mark `**Status**: Confirmed`. After TRD is Confirmed, the PRD is never referenced during development. **Do NOT start IMP until TRD is Confirmed.**
+5. **IMP Phase**: Create `docs/imp/` directory with `**Status**: Draft` in `README.md`. Break TRD sections into development tasks, ordered by dependencies. Each task references its TRD section file.
+6. **IMP Review**: Present the IMP to the user. Iterate until the user confirms. Mark `**Status**: Confirmed`. **Do NOT start implementation until IMP is Confirmed.**
+7. **Pre-Implementation Checkpoint**: Once PRD, TRD, and IMP are all Confirmed, ask the user: _"Project structure is defined. Should I tailor AGENTS.md to remove rules that don't apply to this project?"_ If confirmed, remove irrelevant sections and add a note: `<!-- Tailored on YYYY-MM-DD -->`.
+8. **Implementation Phase**: Pick up tasks from `imp/README.md`, follow the Workflow below for each code change.
 
 #### Adding a New Feature (Existing Project)
 
@@ -130,36 +111,40 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 │                 BEFORE ANY CODE CHANGE               │
 │                                                      │
 │  1. READ trd/README.md — find relevant TRD sections  │
-│  2. READ imp/README.md — find current phase & progress │
-│  3. VERIFY — does IMP fully capture what TRD         │
+│  2. READ imp/README.md — find current phase & tasks  │
+│  3. VERIFY Implementation Notes — spot-check that     │
+│     module paths and key files still exist. If stale  │
+│     → update Implementation Notes before proceeding   │
+│  4. VERIFY — does IMP fully capture what TRD         │
 │     describes? If GAP → ASK & CLARIFY first          │
-│  4. Update TRD / IMP if changes are needed           │
+│  5. Update TRD / IMP if changes are needed           │
+│  6. MARK the relevant IMP task as in-progress [~]     │
 │                                                      │
 ├──────────────────────────────────────────────────────┤
 │          ⚠️  PLAN → CONFIRM → IMPLEMENT               │
 │                                                      │
-│  5. PRESENT PLAN to user — list the specific files    │
+│  7. PRESENT PLAN to user — list the specific files    │
 │     to change, what changes will be made, and why     │
-│  6. WAIT for explicit user confirmation               │
+│  8. WAIT for explicit user confirmation               │
 │     • Do NOT start coding until user approves          │
 │     • If user requests changes to plan, revise & re-ask│
-│  7. IMPLEMENT code changes per approved plan           │
+│  9. IMPLEMENT code changes per approved plan           │
 │                                                      │
 ├──────────────────────────────────────────────────────┤
 │                 AFTER ANY CODE CHANGE                │
 │                                                      │
-│  8. UPDATE relevant IMP phase file — mark tasks done   │
-│  9. UPDATE relevant TRD file — Implementation Notes   │
-│  10. UPDATE PRD.md — if feature scope changed        │
-│  11. UPDATE README  — if user-facing behavior changed │
-│  12. CHECK all docs for consistency                   │
+│  10. UPDATE relevant IMP phase file — mark tasks [x]  │
+│  11. UPDATE relevant TRD file — Implementation Notes  │
+│  12. UPDATE PRD.md — if feature scope changed        │
+│  13. UPDATE README  — if user-facing behavior changed │
+│  14. CHECK all docs for consistency                   │
 │                                                      │
 ├──────────────────────────────────────────────────────┤
 │              ✅ VALIDATE → AUTO-COMMIT                 │
 │                                                      │
-│  13. RUN tests / linter / type-check                 │
-│  14. VERIFY feature works as expected                 │
-│  15. AUTO-COMMIT with descriptive message              │
+│  15. RUN tests / linter / type-check                 │
+│  16. VERIFY feature works as expected                 │
+│  17. AUTO-COMMIT with descriptive message              │
 │      • Format: "feat|fix|refactor|docs: <description>" │
 │      • Commit ONLY when tests pass & feature validated │
 │      • One commit per logical feature / fix             │
@@ -173,6 +158,9 @@ Update PRD → New TRD section → New ADR (if needed) → Append to IMP → Imp
 - **NEVER** dump raw code into TRD.md — describe logic in readable prose
 - **ALWAYS** verify IMP captures everything in TRD before starting
 - **ALWAYS** clarify gaps between TRD and IMP before implementing
+- **ALWAYS** verify Implementation Notes (spot-check file paths exist) before trusting them
+- When modifying an exposed service contract (endpoint shape, response format), note the breaking change in the commit message with affected consumers
+- When a consumed service changes its API, update the Service Dependencies table in the relevant TRD section BEFORE implementing against the new shape
 
 ### TRD Completeness Rule (CRITICAL)
 
@@ -256,7 +244,18 @@ The TRD is NOT a static blueprint — it is a **living system map** that evolves
   - **Configuration**: actual env vars, config files, or settings involved
 - Implementation Notes are updated **immediately** after code changes — not batched
 - If you need to understand how a feature works, read the TRD first — not the code
-- If the TRD's Implementation Notes are missing or stale, **update them before proceeding**
+- If the TRD’s Implementation Notes are missing or stale, **update them before proceeding**
+
+#### Implementation Notes Guidelines
+
+- Implementation Notes describe **current state** — not change history
+- When updating, **replace** previous values rather than appending
+  - ✅ `Module location: src/auth/` (current state)
+  - ❌ `Module location: was src/users/, moved to src/auth/ on 2026-02-15` (change log)
+- If a deviation is resolved (spec updated to match code), **remove it** from deviations
+- Target: Implementation Notes should stay **under 20 lines** per feature section
+- Change history belongs in **git commits**, not in Implementation Notes
+- If a feature is heavily refactored, rewrite Implementation Notes from scratch based on current code — do not patch old notes
 
 ### TRD Structure & File Formats
 
@@ -295,9 +294,21 @@ Every TRD section file follows this exact format:
 
 [Section content: specs, flows, data models, diagrams, business rules...]
 
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| _None_ | | | | | |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None_ | | | | | |
+
 ### Implementation Notes
 
-> _This section will be updated as the feature is implemented._
+> Last verified: _Not yet implemented_
 
 - **Module location**: _TBD_
 - **Key files**: _TBD_
@@ -318,7 +329,13 @@ Every TRD section file follows this exact format:
 
 The index file is the entry point for all TRD navigation. It MUST contain:
 
-1. **Section Map table** with these exact columns:
+1. **Document status** (first line after title):
+
+```markdown
+**Status**: Draft | Confirmed
+```
+
+2. **Section Map table** with these exact columns:
 
 ```markdown
 | # | File | Covers | Key Entities | Depends On | Phase |
@@ -333,7 +350,7 @@ The index file is the entry point for all TRD navigation. It MUST contain:
    - **Depends On**: Other section numbers this section references
    - **Phase**: Development phase (MVP, Phase 2, etc.)
 
-2. **ADR summary table**:
+3. **ADR summary table**:
 
 ```markdown
 | ADR | Decision | Affects |
@@ -341,7 +358,7 @@ The index file is the entry point for all TRD navigation. It MUST contain:
 | [001](./adr/001-example.md) | Decision title | Section numbers affected |
 ```
 
-3. **Glossary**: Domain-specific terms and acronyms
+4. **Glossary**: Domain-specific terms and acronyms
 
 ### TRD Navigation Protocol (AI Agents)
 
@@ -432,20 +449,35 @@ Every IMP phase file follows this exact format:
 ### N.1 Feature/Subsystem Name
 
 - [ ] **Task name** — `docs/trd/NN-section.md` — Brief scope description
-- [ ] **Task name** — `docs/trd/NN-section.md` — Brief scope description
+- [~] **In-progress task** — `docs/trd/NN-section.md` — Currently being worked on
+- [x] **Completed task** — `docs/trd/NN-section.md` — Done and verified
 ```
+
+**Task states**: `[ ]` = not started, `[~]` = in progress (picked up by an agent), `[x]` = completed
+
+**Rules**:
+- Mark a task `[~]` **before** starting work on it (Workflow step 6)
+- Mark a task `[x]` **after** it is implemented, tested, and committed (Workflow step 10)
+- Only ONE task should be `[~]` at a time — finish before starting the next
+- If a session ends with a `[~]` task, the next session should check its status via `git status` and the task's TRD Implementation Notes
 
 #### imp/README.md Format (Index)
 
 The index file is the entry point for IMP navigation. It MUST contain:
 
-1. **Overall progress summary**:
+1. **Document status** (first line after title):
+
+```markdown
+**Status**: Draft | Confirmed
+```
+
+2. **Overall progress summary**:
 
 ```markdown
 **Total Tasks**: NN | **Completed**: 0 | **Progress**: 0%
 ```
 
-2. **Phase summary table**:
+3. **Phase summary table**:
 
 ```markdown
 | Phase | File | Status | Tasks | Progress |
@@ -453,15 +485,15 @@ The index file is the entry point for IMP navigation. It MUST contain:
 | 0 | [Foundation](./phase-0-foundation.md) | Not Started | NN | 0% |
 ```
 
-3. **Dependency notes** between phases
+4. **Dependency notes** between phases
 
 ### Plan-and-Confirm Rule (CRITICAL)
 
 - **NEVER** start writing or modifying code without presenting a plan first
 - **ALWAYS** show the plan to the user: which files change, what changes, and why
-- **ALWAYS** wait for explicit user approval ("yes" / "go ahead" / "approved") before touching code
+- **ALWAYS** wait for explicit user approval (“yes” / “go ahead” / “approved”) before touching code
 - If the user rejects or modifies the plan, revise and re-present — do NOT proceed with the original
-- Trivial typo or single-line fixes still require a brief plan ("I'll change X in file Y — ok?")
+- Trivial typo or single-line fixes still require a brief plan (“I’ll change X in file Y — ok?”)
 
 ### Auto-Commit Rule
 
@@ -520,6 +552,55 @@ The index file is the entry point for IMP navigation. It MUST contain:
 - Keep files focused: one module/class/concern per file. If a file exceeds ~300 lines, consider splitting
 - Shared types, constants, and utilities go in common/shared directories — not duplicated across features
 
+
+### Conventions
+
+Conventions are captured **in AGENTS.md** — not in external style guides, wiki pages, or code comments. This ensures AI agents always have conventions loaded when they start a session.
+
+#### What to Capture
+
+| Category | Examples |
+|----------|----------|
+| **Naming** | File naming (`kebab-case.ts`), class/function/variable naming, database table/column naming |
+| **Architecture patterns** | Where business logic lives, module boundaries, dependency direction |
+| **API style** | REST conventions, error response shape, pagination format, versioning |
+| **Frontend patterns** | Component structure, state management approach, styling methodology |
+| **Code style** | Import ordering, export style (named only), max file length, comment conventions |
+| **Git** | Branch naming, commit message format, PR conventions |
+| **Testing** | What to test, naming conventions, mocking strategy, coverage expectations |
+
+#### Where to Capture
+
+- **Simple project** (single tech stack): All conventions go in the root `AGENTS.md` under a `## CONVENTIONS` section
+- **Multi-stack project** (e.g., `/api` in Java, `/app` in React): Shared conventions (git, PR, cross-cutting rules) go in root `AGENTS.md`. Stack-specific conventions go in each app's own `AGENTS.md` (e.g., `/api/AGENTS.md`, `/app/AGENTS.md`)
+- See **Hierarchical AGENTS.md** below for the full multi-app structure
+
+#### Convention Format
+
+Be **prescriptive**, not descriptive. AI agents follow instructions literally.
+
+```markdown
+## CONVENTIONS
+
+### Naming
+- Files: `kebab-case.ts` (e.g., `user-profile.service.ts`)
+- Classes: `PascalCase` (e.g., `UserProfileService`)
+- Functions/variables: `camelCase`
+- Database tables: `snake_case`, plural (e.g., `user_profiles`)
+- API endpoints: `kebab-case`, plural nouns (e.g., `/api/v1/user-profiles`)
+
+### Architecture
+- Business logic in `src/services/` — never in controllers or route handlers
+- One service per domain entity
+- Controllers only handle HTTP concerns (parsing, validation, response formatting)
+
+### API
+- Error response: `{ "error": { "code": "SNAKE_UPPER", "message": "Human-readable" } }`
+- Pagination: cursor-based, `{ "data": [...], "cursor": { "next": "..." } }`
+```
+
+> **This section is customized per project.** Replace the example conventions above with your project's actual conventions. Delete categories that don't apply.
+
 ### Incremental Verification
 
 - **VERIFY after each logical change** — do not accumulate multiple changes before checking
@@ -535,9 +616,9 @@ AGENTS.md is a **living document** that evolves alongside the project. The agent
 
 | Trigger | What to update in AGENTS.md |
 |---|---|
-| After PRD created | Populate `## PROJECT OVERVIEW` — project description, applications, target users, domain terms, key constraints |
-| After TRD created | Add key architecture decisions, tech stack summary, ADR highlights to PROJECT OVERVIEW |
-| After IMP created | Update current phase note in NOTES section |
+| After PRD confirmed | Populate `## PROJECT OVERVIEW` — project description, applications, target users, domain terms, key constraints |
+| After TRD confirmed | Add key architecture decisions, tech stack summary, ADR highlights to PROJECT OVERVIEW |
+| After IMP confirmed | Update current phase note in NOTES section |
 | During implementation | Update WHERE TO LOOK with actual paths, conventions, directory structure as they emerge |
 | After features implemented | Refine PROJECT OVERVIEW with actual tech choices, deviations from original plan |
 | After ADR created | Note relevant architectural constraints in PROJECT OVERVIEW |
@@ -547,6 +628,35 @@ AGENTS.md is a **living document** that evolves alongside the project. The agent
 - Only update sections relevant to the change — do not rewrite the entire file
 - Preserve all existing rules and conventions — only add/update project-specific context
 - If AGENTS.md conflicts with TRD, the TRD takes precedence — update AGENTS.md to match
+
+### Prompt Log (`docs/PROMPTS.md`)
+
+The agent maintains a running log of user prompts and short answers in `docs/PROMPTS.md`.
+
+**When to log**: After every user prompt. Skip trivial confirmations ("yes", "go ahead").
+
+**Format**:
+
+```markdown
+# Prompt Log
+
+Exact user prompts (EXACTLY and ENTIRELY) and short answers.
+
+---
+
+**Date**: YYYY-MM-DD HH:MM AM/PM TZ
+
+**User**: [exact user prompt, verbatim]
+
+**Answer**: [1-2 sentence summary of what was done or decided]
+```
+
+**Rules:**
+- Record the user's prompt **exactly as written** — do not paraphrase or clean up
+- Keep answers **ultra-short** — 1-2 sentences max, capturing the outcome not the process
+- Include **date and time** with timezone for every entry
+- **Prepend** new entries below the header — most recent prompt always appears first. If you are adding multipe rows at once, make sure they are sorted accordingly.
+- This file is **prepend-only** — previous entries are never modified or reordered
 
 ---
 
@@ -559,7 +669,6 @@ AGENTS.md is a **living document** that evolves alongside the project. The agent
 | Implementation status (index) | `docs/imp/README.md` | Start here — phase summary and progress |
 | IMP phase files | `docs/imp/phase-*.md` | Individual phase task lists |
 | User/dev guide | `docs/README.md` | How to use the application |
-| Reference materials | `docs/reference/` | Note.txt, Requirements.txt, Reference.txt |
 | Agent knowledge | `AGENTS.md` | This file |
 | TRD section files | `docs/trd/*.md` | Individual feature/system specs |
 | Architecture decisions | `docs/trd/adr/` | ADR files with context, decision, consequences |
@@ -572,5 +681,73 @@ AGENTS.md is a **living document** that evolves alongside the project. The agent
 - During implementation, reference `docs/trd/` only — never go back to PRD.md for technical details
 - Use Mermaid for any diagrams (sequence, ER, flowchart)
 - The plan-confirm step is non-negotiable — no exceptions, even for "quick" changes
-- This project is currently in **IMP phase** — TRDs (v3.0) are complete with end-to-end coverage across all 5 apps (Backend, Parent App, Admin App, Kiosk App, Monitor App). IMPs cover 135 tasks across 7 phases. Ready for implementation after final review.
-- One AGENTS.md at the project root is sufficient for most projects. For monorepos with truly independent apps (separate tech stacks, conventions, deployments), create an additional AGENTS.md in each app directory with app-specific overrides — the root AGENTS.md still holds shared rules
+- One AGENTS.md at the project root is sufficient for most projects. For monorepos, see **Hierarchical AGENTS.md** below.
+
+### Hierarchical AGENTS.md (Multi-App Projects)
+
+One AGENTS.md at the project root is sufficient for **most projects**. For monorepos with truly independent apps (separate tech stacks, conventions, deployments), use a hierarchical structure:
+
+```
+project-root/
+├── AGENTS.md              # Shared: project overview, lifecycle, workflow, shared conventions
+├── api/
+│   └── AGENTS.md          # API-specific: Java conventions, architecture patterns, testing approach
+├── app/
+│   └── AGENTS.md          # App-specific: React conventions, component patterns, styling approach
+└── docs/                  # Shared docs — referenced by root AGENTS.md
+    ├── PRD.md
+    ├── trd/
+    └── imp/
+```
+
+#### What Goes Where
+
+| Content | Root AGENTS.md | App AGENTS.md |
+|---------|----------------|---------------|
+| Project overview & lifecycle | ✅ | ❌ |
+| Documentation system (PRD/TRD/IMP) | ✅ | ❌ |
+| Workflow & plan-confirm rules | ✅ | ❌ |
+| Shared conventions (git, PR, cross-cutting) | ✅ | ❌ |
+| Tech-stack-specific conventions | ❌ | ✅ |
+| App-specific architecture patterns | ❌ | ✅ |
+| App-specific folder structure | ❌ | ✅ |
+| App-specific testing approach | ❌ | ✅ |
+| WHERE TO LOOK (app-level paths) | ❌ | ✅ |
+
+#### App AGENTS.md Format
+
+App-level AGENTS.md files are **focused and short** — typically 30-80 lines. They cover only what differs from the root.
+
+```markdown
+# AGENTS.md — [App Name]
+
+> This file contains app-specific conventions. For project-level workflow, documentation system, and shared rules, see the root [AGENTS.md](../AGENTS.md).
+
+## CONVENTIONS
+
+[App-specific conventions: naming, architecture, API style, etc.]
+
+## WHERE TO LOOK
+
+| Task | Location | Notes |
+|------|----------|-------|
+| App entry point | `src/main.ts` | ... |
+| Routes | `src/routes/` | ... |
+```
+
+> **Keep app AGENTS.md self-contained for its domain.** An AI agent working in `/api` should not need to read `/app/AGENTS.md`. Cross-app concerns belong in the root AGENTS.md.
+
+#### AI Agent Behavior: Subfolder AGENTS.md (CRITICAL)
+
+When working in a subdirectory that has its own `AGENTS.md`, the agent MUST read it:
+
+```
+1. ALWAYS read the root AGENTS.md on session start (project-level context)
+2. BEFORE working in a subdirectory, check: does it have its own AGENTS.md?
+   → YES → Read it. App-specific conventions OVERRIDE root conventions where they conflict.
+   → NO  → Use root AGENTS.md conventions only.
+3. When switching between apps (e.g., /api → /app), read the new app's AGENTS.md
+4. If root and app AGENTS.md conflict, the app AGENTS.md wins for that app's code
+```
+
+This ensures agents always have the right conventions loaded — Java conventions when writing Java, React conventions when writing React — without being overwhelmed by irrelevant context.

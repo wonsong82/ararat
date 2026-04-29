@@ -158,9 +158,9 @@ Called by Admin App to initiate device pairing.
 }
 ```
 
-- Pairing code is 6 alphanumeric characters, valid for 10 minutes
-- Device token is long-lived (default: 1 year), renewable
-- `deviceType`: `monitor` or `kiosk`
+- Pairing code is 6 alphanumeric characters (uppercase letters + digits, excluding ambiguous chars: 0/O, 1/I/L), valid for 10 minutes. Generated using Node.js `crypto.randomBytes(4)` mapped to the allowed character set. Displayed as `XXX-XXX` for readability.
+- Device token is a JWT with claims `{ deviceId, tenantId, scope: "monitor:read" }`, signed with the same secret as user JWTs. Default lifetime: 1 year.
+- **Token renewal**: 30 days before expiry, the Monitor App receives a `tokenExpiringsSoon: true` flag in the `/devices/{deviceId}/config` response. The app automatically calls `POST /api/v1/devices/{deviceId}/renew` (authenticated with current device token) to obtain a new token. If renewal fails, the app continues with the current token until expiry, then redirects to `/setup` for re-pairing.
 
 #### `GET /devices/{deviceId}/config`
 
@@ -394,6 +394,22 @@ The Monitor App must run unattended for days or weeks. Robust recovery is critic
 - Log errors to backend (best-effort, non-blocking)
 
 ---
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Backend API | `api/` | Monitor schedule, attendance, announcements (see endpoints above) | GET | Query params | JSON data |
+| Backend API | `api/` | Device registration and config | POST/GET | Device registration body | Device token + config |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| _None — display-only client application_ | | | | |
+
+---
+
 
 ## Implementation Notes
 

@@ -49,6 +49,7 @@ AuditLog:
 - Admin can view full before/after JSON diff for any entry.
 - Admin can export filtered results to CSV.
 - Retention: configurable per gym (default 2 years). Older records archived to cold storage.
+- **Retention enforcement**: Daily cron job (NestJS `@Cron`, runs at 2:00 AM UTC) queries audit log entries older than the gym's configured retention period, exports them to S3 as compressed JSON archives (`s3://ararat-{env}-archives/{tenantId}/audit/{year}/{month}.json.gz`), then deletes from the database. Archived records are queryable via admin request (async retrieval).
 
 #### Task System
 
@@ -76,6 +77,16 @@ Task:
 - **Age group transfers**: When a member's age crosses an age group boundary, a task is created for admin to review and approve the group transfer.
 - **Withdrawal requests**: When a parent submits a withdrawal request, a task is created for admin approval.
 
+**Auto-Creation Event Triggers**:
+
+| Trigger Event | Condition | Task Created |
+|---------------|-----------|-------------|
+| Absence alert escalation | AlertRule fires AND no acknowledgment within 48 hours | "Review unacknowledged absence alert for {memberName}" assigned to Owner |
+| Overdue payment escalation | Invoice overdue > 14 days AND no payment attempt | "Follow up on overdue payment for {memberName} (${amount})" assigned to Owner |
+| Age group boundary | Member's age crosses configured threshold (checked daily at midnight) | "Review age group transfer: {memberName} now qualifies for {newGroup}" assigned to Manager |
+| Withdrawal request | Parent submits withdrawal via app | "Process withdrawal request for {memberName}" assigned to Owner, due in 7 days |
+| 심사 registration deadline | 3 days before 심사 registration closes AND unregistered eligible members exist | "Review 심사 eligibility: {count} eligible members not yet registered" assigned to Manager |
+| Membership expiring soon | Membership expires within 7 days AND no renewal payment pending | "Membership expiring: contact {memberName}'s family about renewal" assigned to Manager |
 **Manual Tasks**:
 - Admin can create tasks with title, description, assignee, and due date.
 - Tasks can be linked to any entity (member, payment, etc.) via `related_entity_type` and `related_entity_id`.
@@ -351,6 +362,39 @@ Owner and Manager roles. Schedule and manage class sessions.
 **Actions**: Create class, edit class, delete class (with confirmation), view enrolled members (navigates to filtered member list).
 
 ---
+
+### Service Dependencies
+
+#### Services This Feature Consumes
+| Service | Repo | Endpoint | Method | Request Shape | Response Shape |
+|---------|------|----------|--------|---------------|----------------|
+| Notification Service | Internal (TRD 13) | Dispatch task notifications | Internal call | `{ recipientId, type, data }` | `{ notificationId }` |
+| AWS S3 | Infrastructure | PutObject (audit archive) | PUT | Compressed JSON | Object metadata |
+
+#### Contracts This Feature Exposes
+| Endpoint | Method | Consumer(s) | Request Shape | Response Shape |
+|----------|--------|-------------|---------------|----------------|
+| `/api/v1/tenants/{tenantId}/audit-log` | GET | Admin App | `?from=&to=&actor_id=&action=&entity_type=&search=` | Paginated audit entries |
+| `/api/v1/tenants/{tenantId}/tasks` | GET/POST/PATCH | Admin App | Task filters or task body | Task list or task detail |
+| `/api/v1/tenants/{tenantId}/announcements` | POST | Admin App | `{ title, body, audience, channels, scheduled_at }` | Announcement confirmation |
+| `/api/v1/tenants/{tenantId}/settings` | GET/PATCH | Admin App | Setting category JSON | Settings data |
+| `/api/v1/tenants/{tenantId}/staff` | GET/POST/PATCH | Admin App | Staff data JSON | Staff list or detail |
+| `/api/v1/tenants/{tenantId}/belt-config` | GET/PUT | Admin App | Belt level ordered list | Belt configuration |
+
+
+---
+
+## Phase 2 Features (Not Yet Specified)
+
+The following features are identified in the PRD for Phase 2 and will be fully specified before implementation:
+
+### Google Calendar Integration
+- **Use case**: Sync gym class schedules to Google Calendar for instructors and parents
+- **Direction**: One-way push from Ararat → Google Calendar (Ararat is the source of truth)
+- **Admin setup**: Connect Google account via OAuth2, select which class schedules to sync
+- **Parent opt-in**: Parents can subscribe to their child's class schedule via iCal feed URL
+- **Sync behavior**: Class creation/update/deletion in Ararat automatically reflected in Google Calendar
+- **Calendar events**: Include class name, time, location (dojang name), and instructor
 
 ### Implementation Notes
 

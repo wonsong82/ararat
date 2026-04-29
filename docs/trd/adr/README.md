@@ -21,6 +21,11 @@ This directory contains all architecture decisions made for the Ararat platform.
 | [013](./013-aws-cloud-platform.md) | AWS Cloud Platform | Accepted | 2026-02-25 | 01-system-architecture, 19-file-storage, 22-infrastructure |
 | [014](./014-github-actions-cicd.md) | GitHub Actions CI/CD | Accepted | 2026-02-25 | 22-infrastructure |
 | [015](./015-frontend-library-stack.md) | Frontend Library Stack | Accepted | 2026-02-26 | 01-system-architecture, 07-web-frontend-architecture |
+| [016](./016-backend-testing-jest.md) | Backend Testing — Jest | Accepted | 2026-03-01 | 05-api-design, 22-infrastructure |
+| [017](./017-frontend-testing-vitest.md) | Frontend Testing — Vitest | Accepted | 2026-03-01 | 07-web-frontend-architecture, 22-infrastructure |
+| [018](./018-e2e-testing-playwright.md) | E2E Testing — Playwright | Accepted | 2026-03-01 | 07-web-frontend-architecture, 22-infrastructure |
+| [019](./019-api-documentation-swagger.md) | API Documentation — @nestjs/swagger | Accepted | 2026-03-01 | 05-api-design, 22-infrastructure |
+| [020](./020-logging-nestjs-pino.md) | Logging — nestjs-pino | Accepted | 2026-03-01 | 01-system-architecture, 22-infrastructure |
 
 ## When to Create a New ADR
 
